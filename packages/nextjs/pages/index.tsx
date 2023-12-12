@@ -1,60 +1,350 @@
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { InputBase } from "~~/components/scaffold-eth/Input";
+import { parseEther, formatEther, formatUnits } from "viem";
+import { etherFormatted, etherFormattedPlusOne } from "~~/utils/etherFormatted";
+import { useInterval } from "usehooks-ts";
+import { useAccount } from "wagmi";
+import { GetContractReturnType } from "viem";
+import { BackwardIcon } from "@heroicons/react/24/outline";
+import PriceChart from "~~/components/PriceChart";
+import { TokenBuy } from "~~/components/TokenBuy";
+import { TokenSell } from "~~/components/TokenSell";
+import { BurnerSigner } from "~~/components/scaffold-eth/BurnerSigner";
+import { TokenBalanceRow } from "~~/components/TokenBalanceRow";
+import { useScaffoldContract, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
+import scaffoldConfig from "~~/scaffold.config";
+import { TTokenBalance, TTokenInfo } from "~~/types/wallet";
+import { notification } from "~~/utils/scaffold-eth";
+import { ContractName } from "~~/utils/scaffold-eth/contract";
 import type { NextPage } from "next";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { MetaHeader } from "~~/components/MetaHeader";
+
+type DexesPaused = { [key: string]: boolean };
 
 const Home: NextPage = () => {
+  const tokens = scaffoldConfig.tokens;
+
+  const { address } = useAccount();
+  const [processing, setProcessing] = useState(false);
+  const [loadingCheckedIn, setLoadingCheckedIn] = useState(true);
+  const [checkedIn, setCheckedIn] = useState(false);
+  const [alias, setAlias] = useState("");
+  const [swapToken, setSwapToken] = useState<TTokenInfo>(scaffoldConfig.tokens[0]);
+  const [showBuy, setShowBuy] = useState(false);
+  const [showSell, setShowSell] = useState(false);
+  const [selectedTokenName, setSelectedTokenName] = useState<string>(tokens[0].name);
+  const [tokensData, setTokensData] = useState<{ [key: string]: TTokenBalance }>({});
+  const [loadingTokensData, setLoadingTokensData] = useState<boolean>(true);
+  const [totalNetWorth, setTotalNetWorth] = useState<bigint>(0n);
+  const [dexesPaused, setDexesPaused] = useState<DexesPaused>({});
+
+  const selectedTokenEmoji = scaffoldConfig.tokens.find(t => selectedTokenName === t.name)?.emoji;
+
+  const message = {
+    action: "user-checkin",
+    address: address,
+    alias: alias,
+  };
+
+  const { data: balanceSalt } = useScaffoldContractRead({
+    contractName: "SaltToken",
+    functionName: "balanceOf",
+    args: [address],
+  });
+
+  const tokenContracts: { [key: string]: any } = {};
+  const dexContracts: { [key: string]: any } = {};
+
+  const saltEmoji = scaffoldConfig.saltToken.emoji;
+
+  tokens.forEach(token => {
+    const contractName: ContractName = `${token.name}Token` as ContractName;
+    const contractDexName: ContractName = `BasicDex${token.name}` as ContractName;
+
+    // The tokens array should not change, so this should be safe. Anyway, we can refactor this later.
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { data } = useScaffoldContract({ contractName });
+    if (data) {
+      tokenContracts[token.name] = data;
+    }
+
+    // The tokens array should not change, so this should be safe. Anyway, we can refactor this later.
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { data: dex } = useScaffoldContract({ contractName: contractDexName });
+    if (dex) {
+      dexContracts[token.name] = dex;
+    }
+  });
+
+  const updateTokensData = async () => {
+    const newTokenData: { [key: string]: TTokenBalance } = {};
+    let total = balanceSalt || 0n;
+
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+      const tokenContract = tokenContracts[token.name];
+      const dexContract = dexContracts[token.name];
+
+      if (tokenContract && dexContract && address) {
+        const balance: bigint = await tokenContract.read.balanceOf([address]);
+        const price: bigint = await dexContract.read.assetOutPrice([parseEther("1")]);
+        const priceIn: bigint = await dexContract.read.assetInPrice([parseEther("1")]);
+        const value: bigint = price * balance / parseEther("1");
+
+        newTokenData[token.name] = {
+          balance: balance,
+          price: price,
+          priceIn: priceIn,
+          value: value,
+        };
+
+        total = total + value;
+      }
+    }
+
+    setTokensData(newTokenData);
+    setTotalNetWorth(total);
+    setLoadingTokensData(false);
+  };
+
+  const updateDexesData = async () => {
+    const pausedData: { [key: string]: boolean } = {};
+
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+      const dexContract = dexContracts[token.name];
+
+      if (dexContract) {
+        const paused = await dexContract.read.paused();
+
+        pausedData[token.name] = paused;
+      }
+    }
+
+    setDexesPaused(pausedData);
+  };
+
+  useEffect(() => {
+    (async () => {
+      if (Object.keys(dexContracts).length === tokens.length) {
+        await updateDexesData();
+      }
+    })();
+  }, [Object.keys(dexContracts).length]);
+
+  useInterval(async () => {
+    if (Object.keys(dexContracts).length === tokens.length) {
+      await updateDexesData();
+    }
+  }, scaffoldConfig.tokenLeaderboardPollingInterval);
+
+  useEffect(() => {
+    (async () => {
+      if (Object.keys(tokenContracts).length === tokens.length && Object.keys(dexContracts).length === tokens.length) {
+        await updateTokensData();
+      }
+    })();
+  }, [Object.keys(tokenContracts).length, Object.keys(dexContracts).length]);
+
+  useInterval(async () => {
+    if (Object.keys(tokenContracts).length === tokens.length && Object.keys(dexContracts).length === tokens.length) {
+      await updateTokensData();
+    }
+  }, scaffoldConfig.pollingInterval);
+
+  useEffect(() => {
+    const updateCheckedIn = async () => {
+      try {
+        setLoadingCheckedIn(true);
+        const response = await fetch(`/api/users/${address}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.ok) {
+          setCheckedIn(true);
+        }
+      } catch (e) {
+        console.log("Error checking if user is checked in", e);
+      } finally {
+        setLoadingCheckedIn(false);
+      }
+    };
+
+    if (address) {
+      updateCheckedIn();
+    }
+  }, [address]);
+
+  const handleSignature = async ({ signature }: { signature: string }) => {
+    setProcessing(true);
+    if (!address || !alias) {
+      setProcessing(false);
+      return;
+    }
+
+    try {
+      // Post the signed message to the API
+      const response = await fetch("/api/check-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ signature, signerAddress: address, alias: alias }),
+      });
+
+      if (response.ok) {
+        setCheckedIn(true);
+        notification.success("Checked in!");
+      } else {
+        const result = await response.json();
+        notification.error(result.error);
+      }
+    } catch (e) {
+      console.log("Error checking in the user", e);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleShowBuy = (selectedToken: TTokenInfo) => {
+    console.log("selectedToken emoji: ", selectedToken.emoji);
+    setSwapToken(selectedToken);
+    setShowBuy(true);
+  };
+
+  const handleShowSell = (selectedToken: TTokenInfo) => {
+    console.log("selectedToken emoji: ", selectedToken.emoji);
+    setSwapToken(selectedToken);
+    setShowSell(true);
+  };
+
   return (
     <>
-      <MetaHeader />
-      <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center mb-8">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
-          </h1>
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/nextjs/pages/index.tsx
-            </code>
+      <div className="flex flex-col gap-2 max-w-[430px] text-center m-auto">
+        {checkedIn && (
+          <p className="font-bold">
+            Total Net Worth: {saltEmoji}{" "}
+            {loadingTokensData ? "..." : etherFormatted(totalNetWorth)}
           </p>
-          <p className="text-center text-lg">
-            Edit your smart contract{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              YourContract.sol
-            </code>{" "}
-            in{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/hardhat/contracts
-            </code>
-          </p>
-        </div>
+        )}
 
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contract
-                </Link>{" "}
-                tab.
-              </p>
+        {!checkedIn && !loadingCheckedIn && (
+          <div>
+            <div>
+              <InputBase
+                value={alias}
+                onChange={v => {
+                  setAlias(v);
+                }}
+                placeholder={alias ? alias : "Username"}
+              />
             </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
+
+            <BurnerSigner
+              className={`btn btn-primary w-full mt-4 ${processing || loadingCheckedIn ? "loading" : ""}`}
+              disabled={processing || loadingCheckedIn || checkedIn}
+              message={message}
+              handleSignature={handleSignature}
+            >
+              {loadingCheckedIn ? "..." : checkedIn ? "Checked-in" : "Check-in"}
+            </BurnerSigner>
           </div>
-        </div>
+        )}
+
+        {checkedIn && !showBuy && !showSell && (
+          <>
+            <div className="rounded-xl">
+              <table className="table-auto border-separate ">
+                <thead>
+                  <tr>
+                    <th>Token</th>
+                    <th>Price</th>
+                    <th>Balance</th>
+                    <th>Value</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tokens.map(token => (
+                    <TokenBalanceRow
+                      key={token.name}
+                      tokenInfo={token}
+                      tokenBalance={tokensData[token.name]}
+                      handleShowBuy={handleShowBuy}
+                      handleShowSell={handleShowSell}
+                      loading={loadingTokensData}
+                      paused={dexesPaused[token.name]}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {scaffoldConfig.showChart && (
+              <>
+                <div className="flex gap-4 text-3xl mt-8">
+                  {tokens.map(token => (
+                    <label
+                      key={token.name}
+                      className={`p-2 cursor-pointer ${selectedTokenName === token.name ? "bg-primary outline outline-2 outline-black" : ""
+                        }`}
+                    >
+                      <input
+                        type="radio"
+                        name="token"
+                        value={token.name}
+                        className="w-0 h-0"
+                        onChange={t => setSelectedTokenName(t.target.value)}
+                      />
+                      {token.emoji}
+                    </label>
+                  ))}
+                </div>
+
+                {selectedTokenEmoji && (
+                  <PriceChart
+                    tokenName={selectedTokenName}
+                    tokenEmoji={selectedTokenEmoji}
+                    rangeSelector={true}
+                    navigator={true}
+                  />
+                )}
+              </>
+            )}
+          </>
+        )}
+
+        {checkedIn && showBuy && (
+          <div className="bg-base-300 rounded-xl p-4">
+            <button className="btn btn-primary" onClick={() => setShowBuy(false)}>
+              <BackwardIcon className="h-5 w-5 mr-2" /> Go Back
+            </button>
+            <TokenBuy
+              token={swapToken.contractName as ContractName}
+              defaultAmountOut={"1"}
+              defaultAmountIn={etherFormattedPlusOne(tokensData[swapToken.name].price)}
+              balanceSalt={balanceSalt || 0n}
+              close={() => setShowBuy(false)}
+            />
+          </div>
+        )}
+
+        {checkedIn && showSell && (
+          <div className="bg-base-300 rounded-xl p-4">
+            <button className="btn btn-primary" onClick={() => setShowSell(false)}>
+              <BackwardIcon className="h-5 w-5 mr-2" /> Go Back
+            </button>
+            <TokenSell
+              token={swapToken.contractName as ContractName}
+              defaultAmountOut={formatUnits(tokensData[swapToken.name].priceIn, 18)}
+              defaultAmountIn={"1"}
+              balanceToken={tokensData[swapToken.name].balance}
+              close={() => setShowSell(false)}
+            />
+          </div>
+        )}
       </div>
     </>
   );

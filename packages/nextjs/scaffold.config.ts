@@ -1,4 +1,6 @@
+import tokensConfig from "./tokens.config";
 import * as chains from "viem/chains";
+import { TTokenInfo } from "~~/types/wallet";
 
 export type ScaffoldConfig = {
   targetNetwork: chains.Chain;
@@ -7,6 +9,10 @@ export type ScaffoldConfig = {
   walletConnectProjectId: string;
   onlyLocalBurnerWallet: boolean;
   walletAutoConnect: boolean;
+  saltToken: TTokenInfo;
+  tokens: TTokenInfo[];
+  tokenLeaderboardPollingInterval: number;
+  showChart: boolean;
 };
 
 const scaffoldConfig = {
@@ -38,6 +44,12 @@ const scaffoldConfig = {
    * 2. If user is not connected to any wallet:  On reload, connect to burner wallet if burnerWallet.enabled is true && burnerWallet.onlyLocal is false
    */
   walletAutoConnect: true,
+
+  saltToken: { contractName: "SaltToken", name: "Salt", emoji: "💸" },
+  tokens: tokensConfig,
+  tokenLeaderboardPollingInterval: 60000,
+  showChart: false,
+
 } satisfies ScaffoldConfig;
 
 export default scaffoldConfig;

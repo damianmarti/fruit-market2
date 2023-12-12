@@ -1909,10 +1909,12 @@ __metadata:
     "@trivago/prettier-plugin-sort-imports": ^4.1.1
     "@types/node": ^17.0.35
     "@types/react": ^18.0.9
+    "@types/react-blockies": ^1
     "@types/react-copy-to-clipboard": ^5.0.4
     "@typescript-eslint/eslint-plugin": ^5.39.0
     "@uniswap/sdk-core": ^4.0.1
     "@uniswap/v2-sdk": ^3.0.1
+    "@vercel/kv": ^1.0.0
     autoprefixer: ^10.4.12
     blo: ^1.0.1
     daisyui: ^3.5.1
@@ -1920,12 +1922,15 @@ __metadata:
     eslint-config-next: ^13.1.6
     eslint-config-prettier: ^8.5.0
     eslint-plugin-prettier: ^4.2.1
+    highcharts: ^11.2.0
+    highcharts-react-official: ^3.2.1
     next: ^13.1.6
     nextjs-progressbar: ^0.0.16
     postcss: ^8.4.16
     prettier: ^2.8.4
     qrcode.react: ^3.1.0
     react: ^18.2.0
+    react-blockies: ^1.4.1
     react-copy-to-clipboard: ^5.1.0
     react-dom: ^18.2.0
     react-hot-toast: ^2.4.0
@@ -2626,6 +2631,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-blockies@npm:^1":
+  version: 1.4.4
+  resolution: "@types/react-blockies@npm:1.4.4"
+  dependencies:
+    "@types/react": "*"
+  checksum: 842f12b6408c25fb73a0aa0c3ea261c97fb1e1fdd0d03da55d8e47ba3d102a2169aa389fd6d0d31a7957e18237e9ccfdbc970e97be36d786f4f013d4a1324006
+  languageName: node
+  linkType: hard
+
 "@types/react-copy-to-clipboard@npm:^5.0.4":
   version: 5.0.4
   resolution: "@types/react-copy-to-clipboard@npm:5.0.4"
@@ -3025,6 +3039,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@upstash/redis@npm:1.24.3":
+  version: 1.24.3
+  resolution: "@upstash/redis@npm:1.24.3"
+  dependencies:
+    crypto-js: ^4.2.0
+  checksum: 7fbecc3b46616e31f60ad0d68f9a8b53d8cf36e53bc35f475b43366d8a832c7fa2fe64f279f7b3ba8a4d184eb7aa5e71586a00df6b3fadf3c05366efd34ceaa3
+  languageName: node
+  linkType: hard
+
 "@vanilla-extract/css@npm:1.9.1":
   version: 1.9.1
   resolution: "@vanilla-extract/css@npm:1.9.1"
@@ -3112,6 +3135,15 @@ __metadata:
   version: 0.0.48
   resolution: "@vercel/hydrogen@npm:0.0.48"
   checksum: cf6242c68403adff45b5badd69371db160ec4a9982423e6a354b55f1868c3143160d129761da1111cc10ca411d37838e90c38863f641ce573be37e1a7155f313
+  languageName: node
+  linkType: hard
+
+"@vercel/kv@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@vercel/kv@npm:1.0.0"
+  dependencies:
+    "@upstash/redis": 1.24.3
+  checksum: 91f870f75ac74a74f8e6a55c44fa59b081dd6721fa696aa412e8c8c33c3cfecb4852222e034b0cbb4142a46e5ef397e756b087418c830043d396a8de97d0fc5b
   languageName: node
   linkType: hard
 
@@ -5474,6 +5506,13 @@ __metadata:
   version: 0.0.2
   resolution: "crypt@npm:0.0.2"
   checksum: baf4c7bbe05df656ec230018af8cf7dbe8c14b36b98726939cef008d473f6fe7a4fad906cfea4062c93af516f1550a3f43ceb4d6615329612c6511378ed9fe34
+  languageName: node
+  linkType: hard
+
+"crypto-js@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "crypto-js@npm:4.2.0"
+  checksum: f051666dbc077c8324777f44fbd3aaea2986f198fe85092535130d17026c7c2ccf2d23ee5b29b36f7a4a07312db2fae23c9094b644cc35f7858b1b4fcaf27774
   languageName: node
   linkType: hard
 
@@ -8190,6 +8229,23 @@ __metadata:
   version: 1.0.8
   resolution: "hey-listen@npm:1.0.8"
   checksum: 6bad60b367688f5348e25e7ca3276a74b59ac5a09b0455e6ff8ab7d4a9e38cd2116c708a7dcd8a954d27253ce1d8717ec891d175723ea739885b828cf44e4072
+  languageName: node
+  linkType: hard
+
+"highcharts-react-official@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "highcharts-react-official@npm:3.2.1"
+  peerDependencies:
+    highcharts: ">=6.0.0"
+    react: ">=16.8.0"
+  checksum: 615f1a352eb95f0e78189506e7d551071438fc11eabff78c55aeb6cc63658f4c284f4920f9e9c85113b319661bf5745c668ef22b71920c1a9f24749e49584aaf
+  languageName: node
+  linkType: hard
+
+"highcharts@npm:^11.2.0":
+  version: 11.2.0
+  resolution: "highcharts@npm:11.2.0"
+  checksum: cc314db7533d6e92e4a15e8f29db2e85cda0c5f01023cfd9242630c40e5208183ae8113bc517c8c47cd5374409c86bf68e39a77a845412dec6b7c0a932302325
   languageName: node
   linkType: hard
 
@@ -11116,7 +11172,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.8.1":
+"prop-types@npm:^15.5.10, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -11305,6 +11361,17 @@ __metadata:
     iconv-lite: 0.4.24
     unpipe: 1.0.0
   checksum: 5362adff1575d691bb3f75998803a0ffed8c64eabeaa06e54b4ada25a0cd1b2ae7f4f5ec46565d1bec337e08b5ac90c76eaa0758de6f72a633f025d754dec29e
+  languageName: node
+  linkType: hard
+
+"react-blockies@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "react-blockies@npm:1.4.1"
+  dependencies:
+    prop-types: ^15.5.10
+  peerDependencies:
+    react: ">=15.0.0"
+  checksum: 87139fc2cc682d34ff8633c58ce96f89826cc3127499b623fb1d8c99dd8e1fe21055750a051933ffc500ca9c88aa017930deae963ffc635135c02907e5d75e22
   languageName: node
   linkType: hard
 
