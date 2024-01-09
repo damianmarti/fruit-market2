@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { parseEther, formatUnits } from "viem";
 import { useDebouncedCallback } from "use-debounce";
 import { useInterval } from "usehooks-ts";
+import { formatUnits, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { InputBase } from "~~/components/scaffold-eth";
@@ -71,8 +71,7 @@ export const TokenBuy = ({
   });
 
   const isLoading = isLoadingDex || isMiningCreditToAsset || isMiningApproveSalt;
-  const disabled =
-    isLoading || amountIn === "" || amountOut === "" || parseEther(amountIn || "0") > balanceSalt;
+  const disabled = isLoading || amountIn === "" || amountOut === "" || parseEther(amountIn || "0") > balanceSalt;
 
   const changeAmountOut = async (amount: string) => {
     const parsedAmount = parseEther(amount || "0");

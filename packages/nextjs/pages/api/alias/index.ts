@@ -1,7 +1,7 @@
 import { kv } from "@vercel/kv";
-import { verifyMessage } from "viem";
 import { NextApiRequest, NextApiResponse } from "next";
-import { Hex, ByteArray } from "viem";
+import { verifyMessage } from "viem";
+import { ByteArray, Hex } from "viem";
 
 type ReqBody = {
   signature: Hex | ByteArray;
@@ -23,7 +23,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return;
     }
 
-    let recoveredAddress: string;
     let valid = false;
     try {
       const message = JSON.stringify({ action: "save-alias", address: signerAddress, alias });
@@ -31,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         address: signerAddress,
         message: message,
         signature,
-      })
+      });
     } catch (error) {
       res.status(400).json({ error: "Error recovering the signature" });
       return;

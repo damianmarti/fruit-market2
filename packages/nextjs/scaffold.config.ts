@@ -13,6 +13,9 @@ export type ScaffoldConfig = {
   tokens: TTokenInfo[];
   tokenLeaderboardPollingInterval: number;
   showChart: boolean;
+  burnerWallet: {
+    signConfirmation: boolean;
+  };
 };
 
 const scaffoldConfig = {
@@ -50,6 +53,10 @@ const scaffoldConfig = {
   tokenLeaderboardPollingInterval: 60000,
   showChart: false,
 
+  // Burner Wallet configuration
+  burnerWallet: {
+    signConfirmation: false,
+  },
 } satisfies ScaffoldConfig;
 
 export default scaffoldConfig;

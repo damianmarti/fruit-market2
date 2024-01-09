@@ -24,27 +24,9 @@ export const TokenBalanceRow = ({
   return (
     <tr>
       <td>{tokenInfo.emoji}</td>
-      <td>
-        {loading
-          ? "..."
-          : tokenBalance &&
-          tokenBalance.price &&
-          etherFormatted(tokenBalance.price)}
-      </td>
-      <td>
-        {loading
-          ? "..."
-          : tokenBalance &&
-          tokenBalance.balance &&
-          etherFormatted(tokenBalance.balance)}
-      </td>
-      <td>
-        {loading
-          ? "..."
-          : tokenBalance &&
-          tokenBalance.value &&
-          etherFormatted(tokenBalance.value)}
-      </td>
+      <td>{loading ? "..." : etherFormatted(tokenBalance?.price)}</td>
+      <td>{loading ? "..." : etherFormatted(tokenBalance?.balance)}</td>
+      <td>{loading ? "..." : etherFormatted(tokenBalance?.value)}</td>
       <td className="flex flex-row place-content-center">
         {paused ? (
           <div>PAUSED</div>

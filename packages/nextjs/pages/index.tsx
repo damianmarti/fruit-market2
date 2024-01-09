@@ -1,26 +1,25 @@
 import { useEffect, useState } from "react";
-import { InputBase } from "~~/components/scaffold-eth/Input";
-import { parseEther, formatEther, formatUnits } from "viem";
-import { etherFormatted, etherFormattedPlusOne } from "~~/utils/etherFormatted";
+import type { NextPageWithLayout } from "./_app";
 import { useInterval } from "usehooks-ts";
+import { formatUnits, parseEther } from "viem";
 import { useAccount } from "wagmi";
-import { GetContractReturnType } from "viem";
 import { BackwardIcon } from "@heroicons/react/24/outline";
-import PriceChart from "~~/components/PriceChart";
-import { TokenBuy } from "~~/components/TokenBuy";
-import { TokenSell } from "~~/components/TokenSell";
+import PriceChart from "~~/components/game-wallet/PriceChart";
+import { TokenBalanceRow } from "~~/components/game-wallet/TokenBalanceRow";
+import { TokenBuy } from "~~/components/game-wallet/TokenBuy";
+import { TokenSell } from "~~/components/game-wallet/TokenSell";
 import { BurnerSigner } from "~~/components/scaffold-eth/BurnerSigner";
-import { TokenBalanceRow } from "~~/components/TokenBalanceRow";
+import { InputBase } from "~~/components/scaffold-eth/Input";
 import { useScaffoldContract, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import scaffoldConfig from "~~/scaffold.config";
-import { TTokenBalance, TTokenInfo } from "~~/types/wallet";
+import { TTokenBalance, TTokenInfo } from "~~/types/wallet.d";
+import { etherFormatted, etherFormattedPlusOne } from "~~/utils/etherFormatted";
 import { notification } from "~~/utils/scaffold-eth";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
-import type { NextPage } from "next";
 
 type DexesPaused = { [key: string]: boolean };
 
-const Home: NextPage = () => {
+const Home: NextPageWithLayout = () => {
   const tokens = scaffoldConfig.tokens;
 
   const { address } = useAccount();
@@ -88,7 +87,7 @@ const Home: NextPage = () => {
         const balance: bigint = await tokenContract.read.balanceOf([address]);
         const price: bigint = await dexContract.read.assetOutPrice([parseEther("1")]);
         const priceIn: bigint = await dexContract.read.assetInPrice([parseEther("1")]);
-        const value: bigint = price * balance / parseEther("1");
+        const value: bigint = (price * balance) / parseEther("1");
 
         newTokenData[token.name] = {
           balance: balance,
@@ -225,8 +224,7 @@ const Home: NextPage = () => {
       <div className="flex flex-col gap-2 max-w-[430px] text-center m-auto">
         {checkedIn && (
           <p className="font-bold">
-            Total Net Worth: {saltEmoji}{" "}
-            {loadingTokensData ? "..." : etherFormatted(totalNetWorth)}
+            Total Net Worth: {saltEmoji} {loadingTokensData ? "..." : etherFormatted(totalNetWorth)}
           </p>
         )}
 
@@ -288,8 +286,9 @@ const Home: NextPage = () => {
                   {tokens.map(token => (
                     <label
                       key={token.name}
-                      className={`p-2 cursor-pointer ${selectedTokenName === token.name ? "bg-primary outline outline-2 outline-black" : ""
-                        }`}
+                      className={`p-2 cursor-pointer ${
+                        selectedTokenName === token.name ? "bg-primary outline outline-2 outline-black" : ""
+                      }`}
                     >
                       <input
                         type="radio"
@@ -338,9 +337,9 @@ const Home: NextPage = () => {
             </button>
             <TokenSell
               token={swapToken.contractName as ContractName}
-              defaultAmountOut={formatUnits(tokensData[swapToken.name].priceIn, 18)}
+              defaultAmountOut={formatUnits(tokensData[swapToken.name].priceIn ?? 0n, 18)}
               defaultAmountIn={"1"}
-              balanceToken={tokensData[swapToken.name].balance}
+              balanceToken={tokensData[swapToken.name].balance ?? 0n}
               close={() => setShowSell(false)}
             />
           </div>

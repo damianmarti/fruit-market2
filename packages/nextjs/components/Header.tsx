@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -14,7 +13,6 @@ import GasFilledIcon from "~~/icons/GasFilledIcon";
 import HomeIcon from "~~/icons/HomeIcon";
 import MedalsIcon from "~~/icons/MedalsIcon";
 import SendIcon from "~~/icons/SendIcon";
-import scaffoldConfig from "~~/scaffold.config";
 import { notification } from "~~/utils/scaffold-eth";
 
 type UserData = {
@@ -32,8 +30,6 @@ export const Header = () => {
 
   const { address } = useAccount();
   const router = useRouter();
-
-  const saltToken = scaffoldConfig.saltToken;
 
   const { data: balance } = useScaffoldContractRead({
     contractName: "SaltToken",
@@ -118,24 +114,31 @@ export const Header = () => {
           <div className="flex gap-6 justify-around mb-8">
             <Link
               href="/"
-              className={`${router.pathname === "/" ? "bg-white scale-110" : "bg-white "
-                } text-custom-black rounded-full p-2 `}
+              className={`${
+                router.pathname === "/" ? "bg-white scale-110" : "bg-white "
+              } text-custom-black rounded-full p-2 `}
             >
               <HomeIcon width="22" height="22" fill={`${router.pathname === "/" ? "#629FFC" : "#0D0D0D"}`} />
             </Link>
             <Link
               href="/send"
-              className={`${router.pathname === "/send" ? "bg-white scale-110" : "bg-white"
-                } text-custom-black rounded-full p-2`}
+              className={`${
+                router.pathname === "/send" ? "bg-white scale-110" : "bg-white"
+              } text-custom-black rounded-full p-2`}
             >
               <SendIcon width="22" height="22" fill={`${router.pathname === "/send" ? "#629FFC" : "#0D0D0D"}`} />
             </Link>
             <Link
-              href="/medals"
-              className={`${router.pathname === "/medals" ? "bg-white scale-110" : "bg-white"
-                } text-custom-black rounded-full p-2`}
+              href="/leaderboard"
+              className={`${
+                router.pathname === "/leaderboard" ? "bg-white scale-110" : "bg-white"
+              } text-custom-black rounded-full p-2`}
             >
-              <MedalsIcon width="22" height="22" fill={`${router.pathname === "medals" ? "#629FFC" : "#0D0D0D"}`} />
+              <MedalsIcon
+                width="22"
+                height="22"
+                fill={`${router.pathname === "leaderboard" ? "#629FFC" : "#0D0D0D"}`}
+              />
             </Link>
           </div>
         </>

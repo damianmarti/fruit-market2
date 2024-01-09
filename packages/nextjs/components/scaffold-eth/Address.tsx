@@ -13,6 +13,7 @@ type TAddressProps = {
   disableAddressLink?: boolean;
   format?: "short" | "long";
   size?: "xs" | "sm" | "base" | "lg" | "xl" | "2xl" | "3xl";
+  alias?: string;
 };
 
 const blockieSizeMap = {
@@ -28,7 +29,7 @@ const blockieSizeMap = {
 /**
  * Displays an address (or ENS) with a Blockie image and option to copy address.
  */
-export const Address = ({ address, disableAddressLink, format, size = "base" }: TAddressProps) => {
+export const Address = ({ address, disableAddressLink, format, size = "base", alias }: TAddressProps) => {
   const [ens, setEns] = useState<string | null>();
   const [ensAvatar, setEnsAvatar] = useState<string | null>();
   const [addressCopied, setAddressCopied] = useState(false);
@@ -69,7 +70,9 @@ export const Address = ({ address, disableAddressLink, format, size = "base" }: 
   const blockExplorerAddressLink = getBlockExplorerAddressLink(getTargetNetwork(), address);
   let displayAddress = address?.slice(0, 5) + "..." + address?.slice(-4);
 
-  if (ens) {
+  if (alias) {
+    displayAddress = alias.slice(0, 15) + (alias.length > 15 ? "..." : "");
+  } else if (ens) {
     displayAddress = ens;
   } else if (format === "long") {
     displayAddress = address;

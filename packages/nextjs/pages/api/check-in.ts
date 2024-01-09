@@ -1,9 +1,10 @@
 import { kv } from "@vercel/kv";
-import { verifyMessage } from "ethers/lib/utils";
 import { NextApiRequest, NextApiResponse } from "next";
+import { verifyMessage } from "viem";
+import { ByteArray, Hex } from "viem";
 
 type ReqBody = {
-  signature: string;
+  signature: Hex | ByteArray;
   signerAddress: string;
   alias: string;
 };
@@ -16,16 +17,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return;
   }
 
-  let recoveredAddress: string;
+  let valid = false;
   try {
     const message = JSON.stringify({ action: "user-checkin", address: signerAddress, alias: alias });
-    recoveredAddress = verifyMessage(message, signature);
+    valid = await verifyMessage({
+      address: signerAddress,
+      message: message,
+      signature,
+    });
   } catch (error) {
     res.status(400).json({ error: "Error recovering the signature" });
     return;
   }
 
-  if (recoveredAddress !== signerAddress) {
+  if (!valid) {
     res.status(403).json({ error: "The signature is not valid" });
     return;
   }

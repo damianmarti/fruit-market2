@@ -1,21 +1,20 @@
 import { kv } from "@vercel/kv";
-import { BigNumber, ethers } from "ethers";
 import { NextApiRequest, NextApiResponse } from "next";
+import { createPublicClient, getContract, http, parseEther } from "viem";
 import scaffoldConfig from "~~/scaffold.config";
-import { getTargetNetwork } from "~~/utils/scaffold-eth";
+import { etherFormatted } from "~~/utils/etherFormatted";
 import { Contract, ContractName, contracts } from "~~/utils/scaffold-eth/contract";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // TODO: Add signature verification or secret key
 
   const tokens = scaffoldConfig.tokens;
-  const tokensData: { [key: string]: { price: BigNumber; priceFormatted: string } } = {};
+  const tokensData: { [key: string]: { price: string; priceFormatted: string } } = {};
 
-  const targetNetwork = getTargetNetwork();
-
-  const rpcUrl = targetNetwork.rpcUrls.default.http[0];
-
-  const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+  const publicClient = createPublicClient({
+    chain: scaffoldConfig.targetNetwork,
+    transport: http(),
+  });
 
   const dexContractsAddresses = [];
 
@@ -23,19 +22,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const token = tokens[i];
 
     const contractDexName: ContractName = `BasicDex${token.name}` as ContractName;
-    const deployedContract = contracts?.[scaffoldConfig.targetNetwork.id]?.[0]?.contracts?.[
-      contractDexName
-    ] as Contract<ContractName>;
+    const deployedContract = contracts?.[scaffoldConfig.targetNetwork.id]?.[contractDexName] as Contract<ContractName>;
 
     dexContractsAddresses.push(deployedContract.address);
 
-    const dexContract = new ethers.Contract(deployedContract.address, deployedContract.abi, provider);
+    const dexContract = getContract({ address: deployedContract.address, abi: deployedContract.abi, publicClient });
 
-    const price = await dexContract.assetOutPrice(ethers.utils.parseEther("1"));
+    const price = await dexContract.read.assetOutPrice([parseEther("1")]);
 
-    const priceFormatted = ethers.utils.formatEther(price.sub(price.mod(1e14)));
+    const priceFormatted = etherFormatted(price);
 
-    tokensData[token.name] = { price, priceFormatted };
+    tokensData[token.name] = { price: price.toString(), priceFormatted };
 
     const key = `${token.name}:price`;
 
@@ -46,13 +43,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const addresses = await kv.smembers("users:checkin");
 
-  const deployedContract = contracts?.[scaffoldConfig.targetNetwork.id]?.[0]?.contracts?.[
-    "CreditNwCalc"
-  ] as Contract<ContractName>;
+  const deployedContract = contracts?.[scaffoldConfig.targetNetwork.id]?.["CreditNwCalc"] as Contract<ContractName>;
 
-  const creditNwCalcContract = new ethers.Contract(deployedContract.address, deployedContract.abi, provider);
+  const creditNwCalcContract = getContract({
+    address: deployedContract.address,
+    abi: deployedContract.abi,
+    publicClient,
+  });
 
-  const netWorths = await creditNwCalcContract.getNetWorths(addresses, dexContractsAddresses);
+  const netWorths = await creditNwCalcContract.read.getNetWorths([addresses, dexContractsAddresses]);
 
   console.log("netWorths", netWorths);
 
@@ -61,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   for (let i = 0; i < addresses.length; i++) {
     const address = addresses[i];
     const netWorth = netWorths[i];
-    const balanceFormatted = ethers.utils.formatEther(netWorth.sub(netWorth.mod(1e14)));
+    const balanceFormatted = etherFormatted(netWorth);
     const balanceNumber = Number(balanceFormatted) * 10000;
     scoreMemberPairs.push({ score: balanceNumber, member: address });
   }
