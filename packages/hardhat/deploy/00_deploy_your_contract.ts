@@ -163,6 +163,17 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
       await dexContract.transferOwnership(dexOwner);
     }
   }
+
+  const landContract = await deploy("Land", {
+    from: deployer,
+    args: [salt.address, tokensContracts[3].address],
+    log: true,
+    autoMine: true,
+    contract: "Land",
+  });
+
+  //put some strawberries into the land contract (really it should just get mint privs right?)
+  await tokensContracts[3].transfer(landContract.address, hre.ethers.utils.parseEther("100"));
 };
 
 export default deployYourContract;

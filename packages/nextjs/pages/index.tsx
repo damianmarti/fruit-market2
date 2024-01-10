@@ -8,6 +8,7 @@ import PriceChart from "~~/components/game-wallet/PriceChart";
 import { TokenBalanceRow } from "~~/components/game-wallet/TokenBalanceRow";
 import { TokenBuy } from "~~/components/game-wallet/TokenBuy";
 import { TokenSell } from "~~/components/game-wallet/TokenSell";
+import { LandOwnership } from "~~/components/land/LandOwnership";
 import { BurnerSigner } from "~~/components/scaffold-eth/BurnerSigner";
 import { InputBase } from "~~/components/scaffold-eth/Input";
 import { useScaffoldContract, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
@@ -345,6 +346,8 @@ const Home: NextPageWithLayout = () => {
           </div>
         )}
       </div>
+
+      <LandOwnership />
     </>
   );
 };
