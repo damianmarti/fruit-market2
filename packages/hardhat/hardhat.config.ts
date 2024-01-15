@@ -99,7 +99,7 @@ const config: HardhatUserConfig = {
       verifyURL: "https://zksync2-mainnet-explorer.zksync.io/contract_verification",
     },
     gnosis: {
-      url: "https://rpc.gnosischain.com",
+      url: "https://rpc.ap-southeast-1.gateway.fm/v4/gnosis/non-archival/mainnet",
       accounts: [deployerPrivateKey],
     },
     chiado: {
