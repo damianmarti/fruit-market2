@@ -69,6 +69,19 @@ KV_REST_API_READ_ONLY_TOKEN=
 
 ---
 
+## 🍓 Fruit Market Land
+
+
+💵 Buy Land and Grow Strawberries! 
+
+<img width="719" alt="image" src="https://github.com/austintgriffith/fruit-market-land/assets/2653167/8ec660c1-bd7c-4e10-97b6-3d0fff5a86f5">
+
+📱 very ugly buttons for each land tile:
+
+<img width="592" alt="image" src="https://github.com/austintgriffith/fruit-market-land/assets/2653167/c45dc837-2ecd-452a-b011-e7e584ef73b8">
+
+🗺 check out the land contract in `packages/hardhat/contracts/Land.sol`
+
 
 ## Charts and Leaderboard
 
