@@ -10,7 +10,7 @@ yarn install
 
 ```
 
-> ⚙️ bring up the chain and deploy your contracts 
+> ⚙️ bring up the chain and deploy your contracts
 
 ```bash
 
@@ -26,7 +26,6 @@ yarn start
 
 > 💿 you'll need to spin up a KV (key value storage) in vercel and copy/paste in the env.local fields:
 
-
 ```
 NEXT_PUBLIC_DEPLOY_BLOCK=0
 NEXT_PUBLIC_LIVE_URL=https://event-wallet.vercel.app
@@ -36,14 +35,11 @@ KV_REST_API_TOKEN=
 KV_REST_API_READ_ONLY_TOKEN=
 ```
 
-
 > 📱 hit the frontend at `http://localhost:3000`
 
-
-> 📝  next, inspect the `targetNetwork` var in `packages/nextjs/scaffold.config.ts` 
+> 📝 next, inspect the `targetNetwork` var in `packages/nextjs/scaffold.config.ts`
 
 (if you are deploying locally it needs to be `chains.hardhat` or `chains.gnosis` out in prod)
-
 
 > 💁‍♂️ login as with your nickname:
 
@@ -61,7 +57,7 @@ KV_REST_API_READ_ONLY_TOKEN=
 
 🤔 try visiting [http://localhost:3000](http://localhost:3000) from an incognito window or another browser to have a fresh burner to play with
 
-(check in with a burner and drop some funds to it using your other account and the  `/checkedIn` page)
+(check in with a burner and drop some funds to it using your other account and the `/checkedIn` page)
 
 ⚖️ at this point, player should be able to trade credits for resources on the dexes:
 
@@ -71,8 +67,7 @@ KV_REST_API_READ_ONLY_TOKEN=
 
 ## 🍓 Fruit Market Land
 
-
-💵 Buy Land and Grow Strawberries! 
+💵 Buy Land and Grow Strawberries!
 
 <img width="719" alt="image" src="https://github.com/austintgriffith/fruit-market-land/assets/2653167/8ec660c1-bd7c-4e10-97b6-3d0fff5a86f5">
 
@@ -81,7 +76,6 @@ KV_REST_API_READ_ONLY_TOKEN=
 <img width="592" alt="image" src="https://github.com/austintgriffith/fruit-market-land/assets/2653167/c45dc837-2ecd-452a-b011-e7e584ef73b8">
 
 🗺 check out the land contract in `packages/hardhat/contracts/Land.sol`
-
 
 ## Charts and Leaderboard
 
@@ -93,48 +87,28 @@ If you want to keep the charts and leaderboard updated you have to run a cron jo
 
 Or you can set the cron job at Vercel using the /packages/nextjs/vercel.json config file.
 
-(On localhost you can just use the browser to hit `http://localhost:3000/api/admin/track-prices` manually) 
-
+(On localhost you can just use the browser to hit `http://localhost:3000/api/admin/track-prices` manually)
 
 ---
 
-## Trading Bots 
+## Trading Bots
 
-If you want prices to randomly fluctuate you need to run bots that have a bunch of liquidity and trade randomly:
+If you want prices to fluctuate you need to run bots with a bunch of liquidity and trade them through a target price.
 
-```bash
-git clone https://github.com/BuidlGuidl/fruit-market-trader
+> ✏️ copy the `.env.example` to the `.env` file in the `packages/trading-bots` dir. Fill in the DEPLOYER_PRIVATE_KEY and change the RPC value if you want.
+> (you can get this private key from the local storage. it's called `scaffoldEth2.burnerWallet.sk`)
 
-cd fruit-market-trader
+> ✏️ You can find the bots config file at `packages/trading-bots/config.ts`.
 
-yarn install
-```
+> ✏️ You can fill in the token's target price at `packages/trading-bots/data.json`. These are the values that the bots will try to reach doing some swaps.
 
-> 💾 you will need to copy your `fruit-market` `packages/nextjs/generated/deployedContracts.ts` into this `fruit-market-trader/deployedContracts.js`
-
-⚠️ notice it changes from `.ts` to `.js` - you will also have to remove the `as const` from the end
-
-(this tells your bots about the new contracts you've deployed)
-
-☢️ Notice: any time you need to redeploy, do `yarn deploy --reset` and recopy over your `deployedContracts.js` 
-
-> ✏️ copy the `.env.example` to `.env` file in the `fruit-market-trader` dir with the following info filled in:
-
-```
-DEPLOYER_PRIVATE_KEY=0xYOUR_PRIVATE_KEY_FROM_YOUR_LOCAL_STORAGE
-GNOSIS_RPC=http://127.0.0.1:8545
-GNOSIS_NETWORK_ID=31337
-```
-
-(you can get this private key from the local storage. it's called `scaffoldEth2.burnerWallet.sk`) 
-
-⛽️ if your this address is loaded up with local funds, you should be good to run:
+⛽️ if this address is loaded up with local funds, you should be good to run:
 
 ```bash
-node batchPrep.js
+yarn trading:setup
 ```
 
-⚙️ this is going to generate a bunch of trader accounts, send them tokens, and save the private keys up in your `.env` file:
+⚙️ this is going to generate a bunch of trader accounts, send them tokens, and save the private keys in your `.env` file:
 
 ![image](https://github.com/BuidlGuidl/event-wallet/assets/2653167/d59b9c72-0a6d-4029-8257-0f4d0b8212dd)
 
@@ -143,10 +117,8 @@ node batchPrep.js
 > 🍎 now you can start a trading bot for each resource like:
 
 ```bash
-node tradeDex.js Apple
+yarn trading:trade Apple
 ```
-
-
 
 ## 🏗 Built using Scaffold-ETH 2
 
@@ -165,5 +137,3 @@ node tradeDex.js Apple
 - 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
 
 ![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/1171422a-0ce4-4203-bcd4-d2d1941d198b)
-
-
