@@ -1,0 +1,21 @@
+{
+  "name": "@se-2/trading-bots",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "setup": "ts-node ts-scripts/batchPrep",
+    "trade": "ts-node ts-scripts/tradeDex"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^20.11.6",
+    "dotenv": "^16.3.1",
+    "envfile": "^6.18.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "viem": "^1.16.6"
+  }
+}

@@ -1,3 +1,6 @@
+import deployedContractsData from "../../contracts/deployedContracts";
+import externalContractsData from "../../contracts/externalContracts";
+import scaffoldConfig from "../../scaffold.config";
 import {
   Abi,
   AbiParameterToPrimitiveType,
@@ -19,9 +22,6 @@ import {
   TransactionReceipt,
 } from "viem";
 import { UseContractEventConfig, UseContractReadConfig, UseContractWriteConfig } from "wagmi";
-import deployedContractsData from "~~/contracts/deployedContracts";
-import externalContractsData from "~~/contracts/externalContracts";
-import scaffoldConfig from "~~/scaffold.config";
 
 const deepMergeContracts = <D extends Record<PropertyKey, any>, S extends Record<PropertyKey, any>>(
   destination: D,
