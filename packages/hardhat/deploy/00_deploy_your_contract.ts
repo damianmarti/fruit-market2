@@ -10,6 +10,9 @@ import tokensConfig from "../../nextjs/tokens.config";
  */
 const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   function delay(time: number) {
+    if (hre.network.name === "localhost") {
+      time = 0;
+    }
     return new Promise(resolve => setTimeout(resolve, time));
   }
 

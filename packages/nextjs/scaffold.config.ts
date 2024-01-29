@@ -1,6 +1,6 @@
 import tokensConfig from "./tokens.config";
+import { TTokenInfo } from "./types/wallet";
 import * as chains from "viem/chains";
-import { TTokenInfo } from "~~/types/wallet";
 
 export type ScaffoldConfig = {
   targetNetwork: chains.Chain;

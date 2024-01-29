@@ -1,4 +1,4 @@
-import { TTokenInfo } from "~~/types/wallet";
+import { TTokenInfo } from "./types/wallet";
 
 export type TokensConfig = TTokenInfo[];
 
