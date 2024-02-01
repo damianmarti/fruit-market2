@@ -103,7 +103,7 @@ async function main() {
     console.log("targetPrice", formatEther(targetPrice));
     console.log("currentPrice", formatEther(currentPrice));
 
-    if (targetPrice < currentPrice) {
+    if (targetPrice > currentPrice) {
       console.log("Trading Credit to Asset");
       let priceDifference = calcPercentageDifference(targetPrice, currentPrice);
       let tradeSize = (parseEther("1") * priceDifference) / 100n;
