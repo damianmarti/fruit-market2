@@ -169,7 +169,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   console.log("burner salt balance: ", burnerSaltBalance.toString());
   if (burnerSaltBalance.eq(0)) {
     console.log("sending salt to burner");
-    await saltContract.transfer(YOUR_LOCAL_BURNER_ADDRESS, hre.ethers.utils.parseEther("5000"));
+    await saltContract.transfer(YOUR_LOCAL_BURNER_ADDRESS, hre.ethers.utils.parseEther("10000"));
   }
 
   const disperseFundsXDaiBalance = await hre.ethers.provider.getBalance(disperseFunds.address);

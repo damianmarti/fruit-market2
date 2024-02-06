@@ -93,7 +93,7 @@ async function main() {
     let currentPrice: bigint;
     try {
       // @ts-ignore
-      currentPrice = await assetDexContract.read.creditInPrice([
+      currentPrice = await assetDexContract.read.assetOutPrice([
         parseEther("1"),
       ]);
     } catch (e) {
@@ -106,7 +106,7 @@ async function main() {
     if (targetPrice > currentPrice) {
       console.log("Trading Credit to Asset");
       let priceDifference = calcPercentageDifference(targetPrice, currentPrice);
-      let tradeSize = (parseEther("1") * priceDifference) / 100n;
+      let tradeSize = (parseEther("1") * priceDifference) / 10n;
       // calc slippage (allow 1%)
       let maxSlippage = await calcSlippage(tradeSize, true);
       // buy fruit
@@ -119,7 +119,7 @@ async function main() {
       console.log("Trading Asset to Credit");
       let priceDifference = calcPercentageDifference(currentPrice, targetPrice);
 
-      let tradeSize = (parseEther("1") * priceDifference) / 100n;
+      let tradeSize = (parseEther("1") * priceDifference) / 10n;
       // calc slippage
       let maxSlippage = await calcSlippage(tradeSize, false);
       // sell fruit
