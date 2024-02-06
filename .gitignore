@@ -1,3 +1,5 @@
+packages/nextjs/contracts/deployedContracts.ts
+
 node_modules
 packages/nextjs/.env
 
