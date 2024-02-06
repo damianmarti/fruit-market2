@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+env:
+  BURNER_ADDRESS: "0x92C8Fd39A4582E6Fe8bb5Be6e7Fdf6533566EA69"
+
 jobs:
   ci:
     runs-on: ${{ matrix.os }}
