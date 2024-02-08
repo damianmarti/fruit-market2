@@ -10,6 +10,8 @@ yarn install
 
 ```
 
+> Configure Burner Address: copy `packages/hardhat/.env.example` to the name `.env` and edit ```BURNER_ADDRESS``` to the public address of your main orchestrating wallet (we usually use a punkwallet for this)
+
 > ⚙️ bring up the chain and deploy your contracts
 
 ```bash

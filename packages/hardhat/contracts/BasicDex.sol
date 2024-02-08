@@ -26,6 +26,7 @@ contract BasicDex is Pausable, AccessControl {
   /* ========== STATE VARS ========== */
 
   bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+  uint256 public constant MIN_INIT_LIQUIDITY = 10e18;
 
   IERC20 public creditToken;
   IERC20 public assetToken;
@@ -73,23 +74,25 @@ contract BasicDex is Pausable, AccessControl {
     _unpause();
   }
 
-  /// @notice initializes amount of liquidity in the dex, will start with a balanced 1:1 ratio of creditToken to assetToken TODO: make this optional?
+  /// @notice initializes amount of liquidity in the dex
   /// @dev user should approve dex contract as spender for assetToken and creditToken before calling init
-  /// @param tokens number of tokens to initialise the liquidity with
-  /// @return totalLiquidity is the number of LPTs minted as a result of deposits made to DEX contract
-  function init(uint256 tokens) public returns (uint256) {
+  /// @param assetToDeposit number of asset tokens to initialise the liquidity with
+  /// @param creditToDeposit number of credit tokens to initialise the liquidity with
+  /// @return totalLiquidity is the total amount of liquidity in the contract (equal to amount of credit tokens deposited)
+  function init(uint256 assetToDeposit, uint256 creditToDeposit) public returns (uint256) {
+    if (assetToDeposit == 0 || creditToDeposit == 0) revert ZeroQuantityError();
     if (totalLiquidity != 0) revert InitError();
 
-    totalLiquidity = tokens;
+    totalLiquidity = creditToDeposit;
 
-    liquidity[msg.sender] = tokens;
+    liquidity[msg.sender] = creditToDeposit;
 
     // transfer credit tokens to the contract
-    bool creditTokenTransferred = creditToken.transferFrom(msg.sender, address(this), tokens);
+    bool creditTokenTransferred = creditToken.transferFrom(msg.sender, address(this), creditToDeposit);
     if (!creditTokenTransferred) revert TokenTransferError(address(creditToken));
 
     // transfer asset tokens to the contract
-    bool assetTokenTransferred = assetToken.transferFrom(msg.sender, address(this), tokens);
+    bool assetTokenTransferred = assetToken.transferFrom(msg.sender, address(this), assetToDeposit);
     if (!assetTokenTransferred) revert TokenTransferError(address(assetToken));
 
     return totalLiquidity;
@@ -280,3 +283,4 @@ contract BasicDex is Pausable, AccessControl {
     emit LiquidityRemoved(msg.sender, amount, creditTokenAmount, assetTokenAmount);
   }
 }
+

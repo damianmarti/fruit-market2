@@ -73,17 +73,36 @@ export const TokenBuy = ({
   const isLoading = isLoadingDex || isMiningCreditToAsset || isMiningApproveSalt;
   const disabled = isLoading || amountIn === "" || amountOut === "" || parseEther(amountIn || "0") > balanceSalt;
 
+  const updateAmountInWithParsedAmount = async (parsedAmount: bigint) => {
+    if (dexContract && parsedAmount > 0n) {
+      try {
+        const price = await dexContract.read.assetOutPrice([parsedAmount]);
+
+        setAmountIn(formatUnits(price, 18));
+      } catch (e: any) {
+        console.error("Error getting price: ", e);
+        // TODO: make it work importing InsufficientLiquidityError
+        // const isInsufficientLiquidityError = e.walk(e => e instanceof InsufficientLiquidityError);
+        // console.log("isInsufficientLiquidityError: ", isInsufficientLiquidityError);
+        if (e.name === "ContractFunctionExecutionError" && e.message.includes("InsufficientLiquidityError")) {
+          console.log("InsufficientLiquidityError");
+          notification.error("Insufficient liquidity for this amount. Please try a smaller amount");
+        } else {
+          notification.error("Error getting price");
+        }
+        setAmountIn("");
+      }
+    }
+  };
+
   const changeAmountOut = async (amount: string) => {
     const parsedAmount = parseEther(amount || "0");
 
     console.log("changeAmountOut", amount, parsedAmount.toString());
 
     if (dexContract && parsedAmount > 0n) {
-      let price = 0n;
-      price = await dexContract.read.assetOutPrice([parsedAmount]);
-
       setAmountOut(amount);
-      setAmountIn(formatUnits(price, 18));
+      await updateAmountInWithParsedAmount(parsedAmount);
     } else {
       setAmountOut("");
       setAmountIn("");
@@ -110,10 +129,7 @@ export const TokenBuy = ({
     const currentAmountOut = parseEther(amountOut || "0");
 
     if (dexContract && amountOut !== "") {
-      let price = 0n;
-      price = await dexContract.read.assetOutPrice([currentAmountOut]);
-
-      setAmountIn(formatUnits(price, 18));
+      await updateAmountInWithParsedAmount(currentAmountOut);
     }
   };
 

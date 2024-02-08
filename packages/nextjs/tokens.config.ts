@@ -3,36 +3,18 @@ import { TTokenInfo } from "./types/wallet";
 export type TokensConfig = TTokenInfo[];
 
 const tokensConfig = [
+  { contractName: "AvocadoToken", name: "Avocado", emoji: "🥑", initAssetAmount: "1000", initCreditAmount: "1000" },
+  { contractName: "BananaToken", name: "Banana", emoji: "🍌", initAssetAmount: "1000", initCreditAmount: "1000" },
+  { contractName: "TomatoToken", name: "Tomato", emoji: "🍅", initAssetAmount: "1000", initCreditAmount: "1000" },
   {
-    contractName: "Grain",
-    name: "Grain",
-    emoji: "🌾",
+    contractName: "StrawberryToken",
+    name: "Strawberry",
+    emoji: "🍓",
+    initAssetAmount: "1000",
+    initCreditAmount: "1000",
   },
-  {
-    contractName: "Sugar",
-    name: "Sugar",
-    emoji: "🍚",
-  },
-  {
-    contractName: "Yeast",
-    name: "Yeast",
-    emoji: "🍞",
-  },
-  {
-    contractName: "Water",
-    name: "Water",
-    emoji: "💧",
-  },
-  {
-    contractName: "Pipe",
-    name: "Pipe",
-    emoji: "🔧",
-  },
-  {
-    contractName: "Firewood",
-    name: "Firewood",
-    emoji: "🪵",
-  },
+  { contractName: "AppleToken", name: "Apple", emoji: "🍏", initAssetAmount: "1000", initCreditAmount: "1000" },
+  { contractName: "LemonToken", name: "Lemon", emoji: "🍋", initAssetAmount: "1000", initCreditAmount: "1000" },
 ] satisfies TokensConfig;
 
 export default tokensConfig;
