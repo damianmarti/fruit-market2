@@ -74,7 +74,7 @@ async function main() {
     });
 
     // get token/dex addresses
-    const assetName = (assetNames[i] /*+ "Token"*/ as string) + "Token";
+    const assetName = "BasicDex" + (assetNames[i] /*+ "Token"*/ as string);
     console.log("assetName", assetName);
     console.log("contracts", contractsCurrentNetwork);
     const assetAddress = contractsCurrentNetwork[assetName]["address"];
@@ -93,6 +93,9 @@ async function main() {
       publicClient,
       walletClient,
     });
+
+    console.log("the credit token is ", creditContract);
+
     const creditHash = await creditContract.write.transfer([
       burner.address,
       tokensToSend,

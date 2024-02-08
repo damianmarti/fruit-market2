@@ -122,6 +122,60 @@ yarn trading:setup
 yarn trading:trade Apple
 ```
 
+
+
+## GPT Dungeon Master
+
+If you want GPT to create assets based on some vibe you can set the vibe with:
+
+
+```bash
+cd packages/oracle
+node index.js # this will prompt you to set the vibe
+```
+This generates a `prompt.txt` file
+
+Once you set the vibe you can run:
+```bash
+cd packages/oracle
+node generateRawAssetList.js 12 #(where 12 is the number of assets you want to generate)
+```
+This generates a `rawAssetList.json` file
+
+There is a second pass to the GPT to clean it up and clean it down to a smaller amount of assets if you want:
+```bash
+cd packages/oracle
+node cleanRawAssets.js 6 #(can be same number as the first pass or smaller)
+```
+This generates a `assetList.json` file
+
+
+Then ask GPT to price things relatively:
+```bash
+cd packages/oracle
+node generatePriceData.js
+```
+This generates a `priceList.json` file
+
+
+Then set your initial tokens with liquidity using:
+```bash
+cd packages/oracle
+node setTokens.js
+```
+
+
+```bash
+
+
+
+
+
+
+
+
+
+
 ## 🏗 Built using Scaffold-ETH 2
 
 <h4 align="center">

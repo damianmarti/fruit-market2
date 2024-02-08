@@ -273,6 +273,9 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   });
 
   //put some strawberries into the land contract (really it should just get mint privs right?)
+
+  // LAND CONTRACT WONT WORK ANY MORE BUT WE WONT ALWAYS HAVE STRAWBERRIES 🍓
+
   console.log("sending tokens to land contract");
   await tokensContracts[3].transfer(landContract.address, hre.ethers.utils.parseEther("100"));
 
