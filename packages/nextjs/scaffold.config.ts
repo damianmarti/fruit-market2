@@ -48,7 +48,7 @@ const scaffoldConfig = {
    */
   walletAutoConnect: true,
 
-  saltToken: { contractName: "SaltToken", name: "Salt", emoji: "💸", initAssetAmount: "", initCreditAmount: "" },
+  saltToken: { contractName: "SaltToken", name: "Salt", emoji: "💸" },
   tokens: tokensConfig,
   tokenLeaderboardPollingInterval: 60000,
   showChart: false,
