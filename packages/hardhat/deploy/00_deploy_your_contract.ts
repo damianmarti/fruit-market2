@@ -32,8 +32,6 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
 
   const YOUR_LOCAL_BURNER_ADDRESS = process.env.BURNER_ADDRESS; //use punkwallet.io to create a burner that holds credits and can disperse
 
-  const dexLiquidityAmount = hre.ethers.utils.parseEther("1000");
-
   const ownerAddress = deployer;
   const dexOwner = "0xEC1A970311702f3d356eB010A500EE4B5ab5C3Bb";
   const dispenserOwner = dexOwner;
@@ -208,16 +206,19 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
 
     const dexContract = await hre.ethers.getContractAt("BasicDex", dex.address, deployer);
 
+    const assetToDeposit = hre.ethers.utils.parseEther(tokens[i].initAssetAmount);
+    const creditToDeposit = hre.ethers.utils.parseEther(tokens[i].initCreditAmount);
+
     const dexSaltAlowance = await saltContract.allowance(deployer, dex.address);
     console.log("dex salt allowance: ", dexSaltAlowance.toString());
-    if (dexSaltAlowance.eq(0)) {
+    if (dexSaltAlowance.lt(creditToDeposit)) {
       console.log("approving salt for dex");
       await saltContract.approve(dex.address, hre.ethers.constants.MaxUint256);
     }
 
     const dexTokenAlowance = await tokensContracts[i].allowance(deployer, dex.address);
     console.log("dex token allowance: ", dexTokenAlowance.toString());
-    if (dexTokenAlowance.eq(0)) {
+    if (dexTokenAlowance.lt(assetToDeposit)) {
       console.log("approving token for dex");
       await tokensContracts[i].approve(dex.address, hre.ethers.constants.MaxUint256);
       console.log("waiting...");
@@ -228,7 +229,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     console.log("dex total liquidity: ", dexTotalLiquidity.toString());
     if (dexTotalLiquidity.eq(0)) {
       console.log("adding liquidity to dex");
-      await dexContract.init(dexLiquidityAmount);
+      await dexContract.init(assetToDeposit, creditToDeposit);
     }
 
     for (let i = 0; i < dexPausers.length; i++) {
