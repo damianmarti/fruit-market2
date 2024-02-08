@@ -1,0 +1,8 @@
+{
+  "name": "oracle",
+  "packageManager": "yarn@3.2.3",
+  "type": "module",
+  "dependencies": {
+    "openai": "^3.2.1"
+  }
+}

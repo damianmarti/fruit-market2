@@ -1,5 +1,11 @@
-packages/nextjs/contracts/deployedContracts.ts
+packages/oracle/priceList.json
+packages/oracle/.yarn
+packages/trading-bots/wallets.json
+packages/oracle/assetList.json
+packages/oracle/rawAssetList.json
 
+packages/nextjs/contracts/deployedContracts.ts
+packages/oracle/.env
 node_modules
 packages/nextjs/.env
 

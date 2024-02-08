@@ -63,7 +63,7 @@ async function main() {
   // loop over assetNames in array
   // create burner wallet, store private key in .env & return wallet info
   for (let i = 0; i < assetNames.length; i++) {
-    console.log(assetNames[i]);
+    console.log("-------🚢 " + assetNames[i]);
     // generate burner address
     const burner = await generateBurner(assetNames[i].toUpperCase());
 
@@ -74,7 +74,9 @@ async function main() {
     });
 
     // get token/dex addresses
-    const assetName = (assetNames[i] + "Token") as string;
+    const assetName = assetNames[i] /*+ "Token"*/ as string;
+    console.log("assetName", assetName);
+    console.log("contracts", contractsCurrentNetwork);
     const assetAddress = contractsCurrentNetwork[assetName]["address"];
     console.log("assetAddress: ", assetAddress);
 
