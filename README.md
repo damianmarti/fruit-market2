@@ -128,12 +128,16 @@ yarn trading:trade Apple
 
 If you want GPT to create assets based on some vibe you can set the vibe with:
 
-
 ```bash
 cd packages/oracle
 node index.js # this will prompt you to set the vibe
 ```
 This generates a `prompt.txt` file
+
+You will need an OpenAI API key in your `packages/oracle/.env` file:
+```bash
+OPENAI_API_KEY=sk-xxxxxx-xxxxxx-xxxxxx-xxxxxx-xxxxxx
+```
 
 Once you set the vibe you can run:
 ```bash
@@ -165,14 +169,13 @@ node setTokens.js
 ```
 
 
-```bash
+Then go deploy your contracts normally and hopefully it works 🫡
 
 
 
 
 
-
-
+----
 
 
 
