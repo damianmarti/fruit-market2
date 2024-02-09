@@ -35,10 +35,10 @@ for (let asset = 0; asset < assetList.length; asset++) {
   if (price > 1000) price = 1000; // cap the price at 1000
 
   if (price >= 1) {
-    assetList[asset].initAssetAmount = "" + (1001 - price);
+    assetList[asset].initAssetAmount = "" + 1001 / price;
     assetList[asset].initCreditAmount = "" + 1000;
   } else {
-    assetList[asset].initAssetAmount = "" + (1001 - price);
+    assetList[asset].initAssetAmount = "" + 1001 / price;
     assetList[asset].initCreditAmount = "" + 1000;
   }
 }
