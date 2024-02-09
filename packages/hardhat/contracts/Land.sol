@@ -8,8 +8,13 @@ pragma solidity 0.8.19;
 // import "@openzeppelin/contracts/access/Ownable.sol";
 
 interface IERC20 {
-  function transfer(address receiver, uint256 amount) external returns (bool);
-  function transferFrom(address sender, address receiver, uint256 amount) external returns (bool);
+	function mint(address to, uint256 amount) external;
+
+	function transferFrom(
+		address sender,
+		address receiver,
+		uint256 amount
+	) external returns (bool);
 }
 
 /**
@@ -17,14 +22,16 @@ interface IERC20 {
  * It also allows the owner to withdraw the Ether in the contract
  * @author BuidlGuidl
  */
-contract Land { 
+contract Land {
+	uint256 public constant GROW_PERIOD = 1 minutes;
+	uint256 public constant ROTTEN_PERIOD = 1 minutes;
 
 	enum Sprites {
 		Grass,
 		House,
 		Strawberry
 	}
-	
+
 	struct Tile {
 		Sprites sprite;
 		address owner;
@@ -34,7 +41,7 @@ contract Land {
 
 	Tile[10] public tiles;
 
-	function getMap() public view returns (Tile[10] memory){
+	function getMap() public view returns (Tile[10] memory) {
 		return tiles;
 	}
 
@@ -53,32 +60,56 @@ contract Land {
 		tiles[_tile].lastHarvest = block.timestamp;
 	}
 
-	function canHarvestAll() public view returns (bool[] memory){
+	function canHarvestAll() public view returns (bool[] memory) {
 		bool[] memory canHarvestAllResult = new bool[](10);
-		for(uint256 i = 0; i < 10; i++){
+		for (uint256 i = 0; i < 10; i++) {
 			canHarvestAllResult[i] = canHarvest(i);
 		}
 		return canHarvestAllResult;
 	}
 
-	function canHarvest(uint256 _tile) public view returns (bool){
-		return block.timestamp - tiles[_tile].lastHarvest > 1 minutes;
+	function rottenAll() public view returns (bool[] memory) {
+		bool[] memory rottenAllResult = new bool[](10);
+		for (uint256 i = 0; i < 10; i++) {
+			rottenAllResult[i] = rotten(i);
+		}
+		return rottenAllResult;
+	}
+
+	function canHarvest(uint256 _tile) public view returns (bool) {
+		return block.timestamp - tiles[_tile].lastHarvest > GROW_PERIOD;
+	}
+
+	function rotten(uint256 _tile) public view returns (bool) {
+		return
+			block.timestamp - tiles[_tile].lastHarvest >
+			(GROW_PERIOD + ROTTEN_PERIOD);
 	}
 
 	function harvest(uint256 _tile) public {
 		require(tiles[_tile].owner == msg.sender, "You don't own this tile");
-		require(tiles[_tile].sprite == Sprites.Strawberry, "Nothing planted here yet");
+		require(
+			tiles[_tile].sprite == Sprites.Strawberry,
+			"Nothing planted here yet"
+		);
 		require(canHarvest(_tile), "Not ready to harvest yet");
+		require(!rotten(_tile), "Rotten strawberry!");
 		tiles[_tile].lastHarvest = block.timestamp;
 		IERC20 strawberry = IERC20(strawberryAddress);
-		strawberry.transfer(msg.sender, 5 ether);
+		strawberry.mint(msg.sender, 5 ether);
+	}
+
+	function farmAgain(uint256 _tile) public {
+		require(tiles[_tile].owner == msg.sender, "You don't own this tile");
+		require(tiles[_tile].sprite == Sprites.Strawberry, "Nothing planted");
+		require(rotten(_tile), "Not rotten yet");
+		tiles[_tile].lastHarvest = block.timestamp;
 	}
 
 	address public strawberryAddress;
 	address public creditToken;
 
 	constructor(address _creditToken, address _strawberryAddress) {
-		
 		creditToken = _creditToken;
 		strawberryAddress = _strawberryAddress;
 
@@ -88,9 +119,8 @@ contract Land {
 			lastHarvest: 0,
 			currentTaxRate: 0
 		});
-		for(uint256 i = 0; i < 10; i++){
+		for (uint256 i = 0; i < 10; i++) {
 			tiles[i] = startingTile;
 		}
 	}
-
 }

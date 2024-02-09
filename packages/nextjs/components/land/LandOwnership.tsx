@@ -38,9 +38,16 @@ export const LandOwnership = () => {
     functionName: "canHarvestAll",
   });
 
+  const { data: rottenAll } = useScaffoldContractRead({
+    contractName: "Land",
+    functionName: "rottenAll",
+  });
+
   const allLandButtons = [];
   for (let i = 0; i < 10; i++) {
-    allLandButtons.push(<LandButton id={i} contractMapData={contractMapData} canHarvestAll={canHarvestAll} />);
+    allLandButtons.push(
+      <LandButton id={i} contractMapData={contractMapData} canHarvestAll={canHarvestAll} rottenAll={rottenAll} />,
+    );
   }
 
   return (
