@@ -74,7 +74,7 @@ async function main() {
     });
 
     // get token/dex addresses
-    const assetName = "BasicDex" + (assetNames[i] /*+ "Token"*/ as string);
+    const assetName = (assetNames[i] + "Token") as string;
     console.log("assetName", assetName);
     console.log("contracts", contractsCurrentNetwork);
     const assetAddress = contractsCurrentNetwork[assetName]["address"];
