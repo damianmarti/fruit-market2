@@ -48,12 +48,12 @@ const cleanList = async (list, amount) => {
     content:
       "please return them in valid json in this format:" +
       `[
-            { "contractName": "BasicDexAvocado", "name": "Avocado", "emoji": "🥑" },
-            { "contractName": "BasicDexBanana", "name": "Banana", "emoji": "🍌" },
-            { "contractName": "BasicDexTomato", "name": "Tomato", "emoji": "🍅" },
-            { "contractName": "BasicDexStrawberry", "name": "Strawberry", "emoji": "🍓" },
-            { "contractName": "BasicDexApple", "name": "Apple", "emoji": "🍏" },
-            { "contractName": "BasicDexLemon", "name": "Lemon", "emoji": "🍋" },
+          { "contractName": "AvocadoToken", "name": "Avocado", "emoji": "🥑" },
+          { "contractName": "BananaToken", "name": "Banana", "emoji": "🍌" },
+          { "contractName": "TomatoToken", "name": "Tomato", "emoji": "🍅" },
+          { "contractName": "StrawberryToken", "name": "Strawberry", "emoji": "🍓" },
+          { "contractName": "AppleToken", "name": "Apple", "emoji": "🍏" },
+          { "contractName": "LemonToken", "name": "Lemon", "emoji": "🍋" },
         ]`,
   });
 
