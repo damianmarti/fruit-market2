@@ -122,6 +122,14 @@ yarn trading:setup
 yarn trading:trade Apple
 ```
 
+OR
+
+you can run all the bots with one command at once: 
+
+```bash
+yarn trading:bots
+```
+
 
 
 ## GPT Dungeon Master

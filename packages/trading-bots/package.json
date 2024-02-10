@@ -6,14 +6,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "setup": "ts-node ts-scripts/batchPrep",
-    "trade": "ts-node ts-scripts/tradeDex"
+    "trade": "ts-node ts-scripts/tradeDex",
+    "bots": "ts-node ts-scripts/allBots"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/node": "^20.11.6",
+    "chalk": "^5.3.0",
     "dotenv": "^16.3.1",
     "envfile": "^6.18.0",
+    "ora": "^8.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
     "viem": "^1.16.6"
