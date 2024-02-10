@@ -126,53 +126,29 @@ yarn trading:trade Apple
 
 ## GPT Dungeon Master
 
-If you want GPT to create assets based on some vibe you can set the vibe with:
+If you want GPT to create assets with prices based on some vibe you can set the vibe with:
 
 ```bash
-cd packages/oracle
-node index.js # this will prompt you to set the vibe
+yarn oracle
 ```
-This generates a `prompt.txt` file
+This generates a `packages/oracle/prompt.txt` file
+
+(If you ever want to start fresh, remove the prompt.txt and run `yarn oracle` again)
 
 You will need an OpenAI API key in your `packages/oracle/.env` file:
 ```bash
 OPENAI_API_KEY=sk-xxxxxx-xxxxxx-xxxxxx-xxxxxx-xxxxxx
 ```
 
-Once you set the vibe you can run:
+Behind the scenes, the oracle will run these commands for you:
 ```bash
-cd packages/oracle
-node generateRawAssetList.js 12 #(where 12 is the number of assets you want to generate)
-```
-This generates a `rawAssetList.json` file
-
-There is a second pass to the GPT to clean it up and clean it down to a smaller amount of assets if you want:
-```bash
-cd packages/oracle
-node cleanRawAssets.js 6 #(can be same number as the first pass or smaller)
-```
-This generates a `assetList.json` file
-
-
-Then ask GPT to price things relatively:
-```bash
-cd packages/oracle
+node generateRawAssetList.js 12 
+node cleanRawAssets.js 6 
 node generatePriceData.js
-```
-This generates a `priceList.json` file
-
-
-Then set your initial tokens with liquidity using:
-```bash
-cd packages/oracle
 node setTokens.js
 ```
 
-
 Then go deploy your contracts normally and hopefully it works 🫡
-
-
-
 
 
 ----

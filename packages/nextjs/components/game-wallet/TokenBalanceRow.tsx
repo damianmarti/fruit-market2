@@ -23,7 +23,9 @@ export const TokenBalanceRow = ({
 }: TTokenBalanceProps) => {
   return (
     <tr>
-      <td>{tokenInfo.emoji}</td>
+      <td align="left" className="px-3 text-xs">
+        {tokenInfo.emoji + " " + tokenInfo.name}
+      </td>
       <td>{loading ? "..." : etherFormatted(tokenBalance?.price)}</td>
       <td>{loading ? "..." : etherFormatted(tokenBalance?.balance)}</td>
       <td>{loading ? "..." : etherFormatted(tokenBalance?.value)}</td>

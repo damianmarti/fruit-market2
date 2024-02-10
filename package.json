@@ -6,7 +6,8 @@
     "packages": [
       "packages/hardhat",
       "packages/nextjs",
-      "packages/trading-bots"
+      "packages/trading-bots",
+      "packages/oracle"
     ]
   },
   "scripts": {
@@ -30,7 +31,8 @@
     "vercel": "yarn workspace @se-2/nextjs vercel",
     "vercel:yolo": "yarn workspace @se-2/nextjs vercel:yolo",
     "trading:setup": "yarn workspace @se-2/trading-bots setup",
-    "trading:trade": "yarn workspace @se-2/trading-bots trade"
+    "trading:trade": "yarn workspace @se-2/trading-bots trade",
+    "oracle": "cd packages/oracle && yarn begin"
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {

@@ -1,33 +1,36 @@
-import readline from "readline";
-import fs from "fs";
-import { exec } from "child_process";
+import { checkAndRequestOpenAIKey } from "./scripts/checkAndRequestOpenAIKey.js";
+import { checkAndCreatePromptFile } from "./scripts/checkAndCreatePromptFile.js";
+import { checkAndGenerateAssetList } from "./scripts/checkAndGenerateAssetList.js";
 
-// Create readline interface
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+import { runCommandWithSpinner } from "./scripts/runCommandWithSpinner.js";
+import chalk from "chalk";
 
-rl.question(
-  "\n\n\n🧌 GPT Dungeon Master: What should our game be about? ",
-  async (answer) => {
-    await fs.writeFileSync("prompt.txt", "the game is about: " + answer);
-    // Close the readline interface
-    rl.close();
+// New function to deploy contracts
+async function deployContracts() {
+  console.log(chalk.blue("Deploying contracts with `yarn deploy --reset`..."));
+  await runCommandWithSpinner("yarn deploy --reset");
+}
 
-    console.log("💾 prompt.txt saved");
+async function main() {
+  console.log(chalk.cyan("🔮 gpt dungeon master"));
 
-    /* const cmd = `node generateRawAssetList.js 25 '` + answer + `'`;
-    console.log("⚙️ cmd", cmd);
-    exec(cmd, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return;
-      }
-      console.log(`stdout: ${stdout}`);
-      if (stderr) {
-        console.error(`stderr: ${stderr}`);
-      }
-    });*/
-  }
-);
+  await checkAndRequestOpenAIKey();
+  await checkAndCreatePromptFile();
+  await checkAndGenerateAssetList();
+
+  console.log(
+    "  🛰 you are ready to deploy your contracts with `yarn deploy --reset`"
+  );
+
+  // Example of how to continue with other commands
+  // const answers = await askQuestions();
+  // console.log(chalk.blue(`Running command: ${answers.command}`));
+  /*
+  try {
+    await runCommandWithSpinner(answers.command);
+  } catch (error) {
+    console.error(chalk.red("Failed to execute command."));
+  }*/
+}
+
+main();
