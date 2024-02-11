@@ -1,5 +1,12 @@
 import { Configuration, OpenAIApi } from "openai";
 import fs from "fs";
+import dotenv from "dotenv";
+dotenv.config();
+if(!process.env.OPENAI_API_KEY){
+  console.log("Please set OPENAI_API_KEY in your environment variables")
+  process.exit()
+}
+
 
 console.log("📺 node cleanRawAssets 3");
 

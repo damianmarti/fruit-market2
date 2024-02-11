@@ -7,7 +7,8 @@ if(!process.env.OPENAI_API_KEY){
   process.exit()
 }
 
-console.log("📺 node generatePriceData");
+console.log("📺 node updatePriceData");
+
 
 const configuration = new Configuration({
   //apiKey: "",//,
@@ -16,7 +17,7 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-const generatePrices = async (assetList) => {
+const generatePrices = async (assetList, currentPrices) => {
   let state = [];
   state.push({
     role: "system",
@@ -31,24 +32,14 @@ const generatePrices = async (assetList) => {
   state.push({
     role: "system",
     content:
-      "and set an initial price in credits for each item in the following format:" +
-      `
-      {
-        "silver": "5",
-        "avocado": "2",
-        "banana": "1.4",
-        "lemon": "0.8",
-        "strawberry": "3",
-        "tomato": "0.9"
-        }
-      
-        you'll use their lowercase name and give them a price that is fair relative to the other assets ranging from 0.1 credits each to 10 credits each 
-      `,
+      "and set the initial prices in credits for each item in the following format: " +
+      currentPrices,
   });
 
   state.push({
     role: "user",
-    content: "please list the price for each item in this format in valid json",
+    content:
+      "please slightly update the price for each item slight up or down relative to the current price in this format in valid json maybe pick one asset to go up 10% or down 10%",
   });
 
   console.log(state);
@@ -89,11 +80,19 @@ console.log("🔮 generating first prices...");
 
 const assetList = await fs.readFileSync("assetList.json", "utf8");
 
-const priceList = await generatePrices(assetList);
+const currentPrices = await fs.readFileSync(
+  "../trading-bots/data.json",
+  "utf8"
+);
+
+console.log("currentPrices", currentPrices);
+
+const priceList = await generatePrices(assetList, currentPrices);
+
 
 //let's write this to a rawAssetList.json file
 await fs.writeFileSync("priceList.json", JSON.stringify(priceList));
 
-console.log("👀 priceList", priceList);
+console.log("👀 NEW priceList", priceList);
 
 await fs.writeFileSync("../trading-bots/data.json", JSON.stringify(priceList));

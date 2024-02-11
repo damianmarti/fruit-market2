@@ -37,7 +37,7 @@ async function main() {
 
   while (true) {
     console.log(" ⚙️ all bots running, kill this to stop...");
-    await new Promise((resolve) => setTimeout(resolve, 10000));
+    await new Promise((resolve) => setTimeout(resolve, 30000));
   }
 }
 

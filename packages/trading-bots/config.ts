@@ -2,8 +2,8 @@ import { parseEther } from "viem";
 
 const botConfig = {
   creditTokenName: "SaltToken",
-  tokensToSend: parseEther("990"),
-  networkTokensToSend: parseEther("0.1"),
+  tokensToSend: parseEther("9990"),
+  networkTokensToSend: parseEther("0.5"),
   confirmations: 1,
   tradeFrequency: 3_000,
 };

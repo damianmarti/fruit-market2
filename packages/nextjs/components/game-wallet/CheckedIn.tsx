@@ -38,6 +38,12 @@ export const CheckedIn = ({ addresses, isLoading }: { addresses: LeaderboardData
     args: [addressesToSend],
   });
 
+  const { writeAsync: sendSalt } = useScaffoldContractWrite({
+    contractName: "SaltToken",
+    functionName: "transfer",
+    args: ["", parseEther("0")],
+  });
+
   const checkAllAddressesWithZeroBalance = () => {
     const addressesWithZeroBalance = addresses.filter(addressData => {
       return addressData.balance === 0n;
@@ -55,7 +61,11 @@ export const CheckedIn = ({ addresses, isLoading }: { addresses: LeaderboardData
     }
     setSendingSalt({ ...sendingSalt, [address]: true });
     // @ts-ignore
-    await writeTx(saltContract?.transfer(address, parseEther("25")));
+
+    console.log("saltContract", saltContract);
+    //await writeTx(saltContract?.transfer(address, parseEther("25")));
+
+    await sendSalt({ args: [address, parseEther("25")] });
     setSendingSalt({ ...sendingSalt, [address]: false });
   };
 

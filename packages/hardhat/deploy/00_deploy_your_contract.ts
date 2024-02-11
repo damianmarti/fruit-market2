@@ -33,13 +33,13 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const YOUR_LOCAL_BURNER_ADDRESS = process.env.BURNER_ADDRESS; //use punkwallet.io to create a burner that holds credits and can disperse
 
   const ownerAddress = deployer;
-  const dexOwner = "0xEC1A970311702f3d356eB010A500EE4B5ab5C3Bb";
+  const dexOwner = YOUR_LOCAL_BURNER_ADDRESS;
   const dispenserOwner = dexOwner;
   const dexPausers = [
     dexOwner,
     YOUR_LOCAL_BURNER_ADDRESS,
-    "0xd6f85d9d79E3a87eCFe98d907495f85Fb6DAF74f", //Damu
     /*
+    "0xd6f85d9d79E3a87eCFe98d907495f85Fb6DAF74f", //Damu
     "0xD26536C559B10C5f7261F3FfaFf728Fe1b3b0dEE", //Damu
     "0x6CE015E312e7240e85323A2a506cbD799534aB68", //Toady
     "0xD26536C559B10C5f7261F3FfaFf728Fe1b3b0dEE", //Toady
@@ -167,8 +167,13 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   console.log("burner salt balance: ", burnerSaltBalance.toString());
   if (burnerSaltBalance.eq(0)) {
     console.log("sending salt to burner");
-    await saltContract.transfer(YOUR_LOCAL_BURNER_ADDRESS, hre.ethers.utils.parseEther("35000"));
+    await saltContract.transfer(YOUR_LOCAL_BURNER_ADDRESS, hre.ethers.utils.parseEther("3500000"));
   }
+
+  await signer.sendTransaction({
+    to: disperseFunds.address,
+    value: hre.ethers.utils.parseEther("10"),
+  });
 
   const disperseFundsXDaiBalance = await hre.ethers.provider.getBalance(disperseFunds.address);
   console.log("disperseFunds xDai balance: ", disperseFundsXDaiBalance.toString());
@@ -189,7 +194,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     console.log("burner token balance: ", token.name, burnerTokenBalance.toString());
     if (burnerTokenBalance.eq(0)) {
       console.log("sending token to burner wallet: ", token.name);
-      await tokensContracts[i].transfer(YOUR_LOCAL_BURNER_ADDRESS, hre.ethers.utils.parseEther("1000"));
+      await tokensContracts[i].transfer(YOUR_LOCAL_BURNER_ADDRESS, hre.ethers.utils.parseEther("10000"));
     }
 
     console.log("waiting...");
@@ -264,9 +269,11 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     await delay(5000);
   }
 
+  const STRAWBS = 2;
+
   const landContract = await deploy("Land", {
     from: deployer,
-    args: [salt.address, tokensContracts[3].address],
+    args: [salt.address, tokensContracts[STRAWBS].address],
     log: true,
     autoMine: true,
     contract: "Land",
@@ -277,7 +284,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   // LAND CONTRACT WONT WORK ANY MORE BUT WE WONT ALWAYS HAVE STRAWBERRIES 🍓
 
   console.log("sending tokens to land contract");
-  await tokensContracts[3].transfer(landContract.address, hre.ethers.utils.parseEther("100"));
+  await tokensContracts[STRAWBS].transfer(landContract.address, hre.ethers.utils.parseEther("100"));
 
   if (dispenserOwner !== deployer) {
     const hasRole = await disperseFundsContract.hasRole(
@@ -290,6 +297,15 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
       await disperseFundsContract.transferOwnership(dispenserOwner);
     }
   }
+
+  // make a regular eth transaction to send gas to your burner so it can send gas to the bots:
+
+  console.log("sending eth to burner wallet", YOUR_LOCAL_BURNER_ADDRESS);
+
+  await signer.sendTransaction({
+    to: YOUR_LOCAL_BURNER_ADDRESS,
+    value: hre.ethers.utils.parseEther("15"),
+  });
 };
 
 export default deployYourContract;

@@ -159,6 +159,16 @@ node setTokens.js
 Then go deploy your contracts normally and hopefully it works 🫡
 
 
+
+⚖️ to have GPT update the prices: 
+
+```bash
+yarn oracle:update
+```
+
+
+
+
 ----
 
 

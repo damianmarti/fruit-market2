@@ -12,7 +12,7 @@
   },
   "scripts": {
     "account": "yarn workspace @se-2/hardhat account",
-    "chain": "yarn workspace @se-2/hardhat chain",
+    "chain": "yarn workspace @se-2/hardhat chain --hostname 0.0.0.0",
     "fork": "yarn workspace @se-2/hardhat fork",
     "deploy": "yarn workspace @se-2/hardhat deploy",
     "verify": "yarn workspace @se-2/hardhat verify",
@@ -33,6 +33,7 @@
     "trading:setup": "yarn workspace @se-2/trading-bots setup",
     "trading:trade": "yarn workspace @se-2/trading-bots trade",
     "trading:bots": "yarn workspace @se-2/trading-bots bots",
+    "oracle:update": "cd packages/oracle && node updatePriceData.js",
     "oracle:bots": "cd packages/oracle && node runAllBots.js",
     "oracle": "cd packages/oracle && yarn begin"
   },
