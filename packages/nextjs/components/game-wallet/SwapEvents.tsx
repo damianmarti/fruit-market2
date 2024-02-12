@@ -26,7 +26,7 @@ export const SwapEvents = () => {
           const { _user, _tradeDirection, _tokensSwapped, _tokensReceived } = log.args;
           console.log("📡 TokenSwap event", _user, _tradeDirection, _tokensSwapped, _tokensReceived);
           const tokenEmoji = token.emoji;
-          if (_user && _tradeDirection && _tokensSwapped && _tokensReceived) {
+          if (_user && _tradeDirection !== undefined && _tokensSwapped && _tokensReceived) {
             const newEvent: SwapData = {
               tokenEmoji,
               address: _user,
