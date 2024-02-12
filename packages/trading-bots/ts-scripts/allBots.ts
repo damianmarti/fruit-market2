@@ -37,6 +37,9 @@ async function main() {
 
   while (true) {
     console.log(" ⚙️ all bots running, kill this to stop...");
+    console.log(" hitting the local cron too: ");
+    const result = await fetch("http://0.0.0.0:3000/api/admin/track-prices");
+    console.log("cron status: ", result.status);
     await new Promise((resolve) => setTimeout(resolve, 30000));
   }
 }
