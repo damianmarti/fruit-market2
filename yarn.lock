@@ -12491,6 +12491,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "se-2@workspace:."
   dependencies:
+    dotenv: ^16.4.2
     husky: ^8.0.1
     lint-staged: ^13.0.3
     openai: ^3.2.1

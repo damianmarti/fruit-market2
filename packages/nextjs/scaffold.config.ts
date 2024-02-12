@@ -1,22 +1,27 @@
 import tokensConfig from "./tokens.config";
 import { TTokenInfo } from "./types/wallet";
+import dotenv from "dotenv";
 import { type Chain } from "viem";
 import * as chains from "viem/chains";
 
+dotenv.config();
+
 const localRpcUrl = process.env.CUSTOM_LOCAL_RPC;
+
+console.log("localRpcUrl", localRpcUrl);
 
 const customChain = {
   id: 31_337,
-  name: "Hardhat",
-  network: "hardhat",
+  name: "cloud",
+  network: "cloud",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",
     symbol: "ETH",
   },
   rpcUrls: {
-    default: { http: [localRpcUrl || ""] },
-    public: { http: [localRpcUrl || ""] },
+    default: { http: [localRpcUrl ? localRpcUrl : "http://127.0.0.1:8545"] },
+    public: { http: [localRpcUrl ? localRpcUrl : "http://127.0.0.1:8545"] },
   },
 } as const satisfies Chain;
 
@@ -38,7 +43,7 @@ export type ScaffoldConfig = {
 
 const scaffoldConfig = {
   // The network where your DApp lives in
-  targetNetwork: localRpcUrl && localRpcUrl.length > 3 ? customChain : chains.hardhat,
+  targetNetwork: customChain, /// you need to set this to chains.hardhat sorry !
 
   // The interval at which your front-end polls the RPC servers for new data
   // it has no effect on the local network
