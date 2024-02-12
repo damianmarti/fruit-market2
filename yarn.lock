@@ -1961,7 +1961,7 @@ __metadata:
   dependencies:
     "@types/inquirer": ^9
     chalk: ^5.3.0
-    dotenv: ^16.3.1
+    dotenv: ^16.4.2
     envfile: ^6.18.0
     inquirer: ^9.2.14
     openai: ^3.2.1
@@ -6098,6 +6098,13 @@ __metadata:
   version: 16.4.0
   resolution: "dotenv@npm:16.4.0"
   checksum: f39dccc0eb25345675045d91762b8c92fc853402a8b25ba02723a7e27da58cefe0593771bbea97781df09300514eedb393b6c8f7bfa547fd9f7b69f0c965cbdb
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.4.2":
+  version: 16.4.2
+  resolution: "dotenv@npm:16.4.2"
+  checksum: c53d064435d835b07b2cd90a692f6859b8ba016b7ca57eeb487e430da74fb2335ac2bdb53f16774011d7b9b6b44c093637b39cbe76d9e01f9b8856a6dfd32f4a
   languageName: node
   linkType: hard
 
