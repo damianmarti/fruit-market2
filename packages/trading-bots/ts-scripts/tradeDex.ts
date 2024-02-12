@@ -103,54 +103,66 @@ async function main() {
     console.log("targetPrice", formatEther(targetPrice));
     console.log("currentPrice", formatEther(currentPrice));
 
+    if (betweenRange(currentPrice, targetPrice)) {
+      console.log("Price is within range");
+      return;
+    }
+
+    // @ts-ignore
+    let totalLiquidity: bigint = await assetDexContract.read.totalLiquidity();
+    let tradeSize = totalLiquidity / 50n;
+    console.log("tradeSize: ", formatEther(tradeSize));
     if (targetPrice > currentPrice) {
       console.log("Trading Credit to Asset");
-      let priceDifference = calcPercentageDifference(targetPrice, currentPrice);
-      let tradeSize = (parseEther("1") * priceDifference) / 10n;
-      // calc slippage (allow 1%)
-      let maxSlippage = await calcSlippage(tradeSize, true);
+      // calc amount out, allow slippage (allow 1%)
+      let amountOut = await calcAssetOut(tradeSize);
+      console.log("amount out: ", formatEther(amountOut));
       // buy fruit
       try {
-        await assetDexContract.write.creditToAsset([tradeSize, maxSlippage]);
+        await assetDexContract.write.creditToAsset([tradeSize, amountOut]);
       } catch (e) {
         console.log("Something went wrong", e);
       }
     } else {
       console.log("Trading Asset to Credit");
-      let priceDifference = calcPercentageDifference(currentPrice, targetPrice);
-
-      let tradeSize = (parseEther("1") * priceDifference) / 10n;
-      // calc slippage
-      let maxSlippage = await calcSlippage(tradeSize, false);
+      tradeSize = tradeSize * parseEther("1") / currentPrice;
+      console.log("tradeSize in assets: ", formatEther(tradeSize));
+      // calc amount out, allow slippage (allow 1%)
+      let amountOut = await calcCreditOut(tradeSize);
+      console.log("amount out: ", formatEther(amountOut));
       // sell fruit
       try {
-        await assetDexContract.write.assetToCredit([tradeSize, maxSlippage]);
+        await assetDexContract.write.assetToCredit([tradeSize, amountOut]);
       } catch (e) {
         console.log("Something went wrong", e);
       }
     }
   }
 
-  // helper function to calculate maximum acceptable slippage for a trade
-  async function calcSlippage(amountIn: bigint, isAsset: boolean) {
-    let amountOut: bigint = 0n;
+  function betweenRange(currentPrice: bigint, targetPrice: bigint) {
+    let difference = (currentPrice * 100n) / targetPrice;
+    return difference > 97n && difference < 103n;
+  }
 
-    if (isAsset) {
-      try {
-        //@ts-ignore
-        amountOut = await assetDexContract.read.creditInPrice([amountIn]);
-        console.log("amount out", amountOut);
-      } catch {
-        console.log("calcSlippage Error");
-      }
-    } else {
-      try {
-        //@ts-ignore
-        amountOut = await assetDexContract.read.assetInPrice([amountIn]);
-        console.log("amount out", amountOut);
-      } catch {
-        console.log("calcSlippage Error");
-      }
+  async function calcAssetOut(amountIn: bigint) {
+    let amountOut: bigint = 0n;
+    try {
+      //@ts-ignore
+      amountOut = await assetDexContract.read.creditInPrice([amountIn]);
+    } catch {
+      console.log("calcSlippage Error");
+    }
+
+    return (amountOut * 99n) / 100n;
+  }
+
+  async function calcCreditOut(amountIn: bigint) {
+    let amountOut: bigint = 0n;
+    try {
+      //@ts-ignore
+      amountOut = await assetDexContract.read.assetInPrice([amountIn]);
+    } catch {
+      console.log("calcSlippage Error");
     }
 
     return (amountOut * 99n) / 100n;
