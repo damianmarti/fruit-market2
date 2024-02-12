@@ -20,8 +20,8 @@ const customChain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    default: { http: [localRpcUrl ? localRpcUrl : "http://127.0.0.1:8545"] },
-    public: { http: [localRpcUrl ? localRpcUrl : "http://127.0.0.1:8545"] },
+    default: { http: [localRpcUrl ? localRpcUrl : "http://35.153.19.248:8545"] },
+    public: { http: [localRpcUrl ? localRpcUrl : "http://35.153.19.248:8545"] },
   },
 } as const satisfies Chain;
 
