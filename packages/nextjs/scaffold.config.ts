@@ -1,12 +1,9 @@
 import tokensConfig from "./tokens.config";
 import { TTokenInfo } from "./types/wallet";
-import dotenv from "dotenv";
 import { type Chain } from "viem";
 import * as chains from "viem/chains";
 
-dotenv.config();
-
-const localRpcUrl = process.env.CUSTOM_LOCAL_RPC;
+const localRpcUrl = process.env.NEXT_PUBLIC_CUSTOM_LOCAL_RPC;
 
 console.log("localRpcUrl", localRpcUrl);
 
@@ -20,8 +17,8 @@ const customChain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    default: { http: [localRpcUrl ? localRpcUrl : "http://35.153.19.248:8545"] },
-    public: { http: [localRpcUrl ? localRpcUrl : "http://35.153.19.248:8545"] },
+    default: { http: [localRpcUrl ? localRpcUrl : "http://127.0.0.1:8545"] },
+    public: { http: [localRpcUrl ? localRpcUrl : "http://127.0.0.1:8545"] },
   },
 } as const satisfies Chain;
 
