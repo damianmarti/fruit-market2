@@ -12,7 +12,7 @@ contract FruitToken is ERC20, AccessControl {
 
     constructor(string memory _name, string memory _symbol, address _owner) ERC20(_name, _symbol) {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _mint(_owner, 60000 ether);
+        _mint(_owner, 600000 ether);
     }
 
     function transferOwnership(address newOwner) public onlyRole(DEFAULT_ADMIN_ROLE) {

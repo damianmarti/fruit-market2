@@ -66,7 +66,7 @@ const cleanList = async (list, amount) => {
 
   state.push({
     role: "system",
-    content: "please simplify names down to single words",
+    content: "please simplify names down to single words and the contractName should be the same as the name but with Token at the end",
   });
   console.log(state);
 
