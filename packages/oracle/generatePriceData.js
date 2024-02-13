@@ -42,7 +42,7 @@ const generatePrices = async (assetList) => {
         "tomato": "0.9"
         }
       
-        you'll use their lowercase name and give them a price that is fair relative to the other assets ranging from 0.1 credits each to 10 credits each 
+        you'll use their lowercase name and give them a price that is fair relative to the other assets ranging from 0.1 credits each to 10 or even 50 credits each 
       `,
   });
 
