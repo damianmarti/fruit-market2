@@ -89,6 +89,12 @@ async function main() {
   async function makeTx() {
     // returns bigint
     const targetPrice = getTargetPrice(name.toLowerCase());
+
+    if (targetPrice === parseEther("0")) {
+      console.log("Target price is 0, skipping trade");
+      return;
+    }
+
     // returns bigint
     let currentPrice: bigint;
     try {
@@ -105,6 +111,7 @@ async function main() {
 
     if (betweenRange(currentPrice, targetPrice)) {
       console.log("Price is within range");
+      setTargetPriceToZero(name.toLowerCase());
       return;
     }
 
@@ -177,13 +184,18 @@ async function main() {
     return parseEther(jsonData[assetName]);
   }
 
-  function calcPercentageDifference(a: bigint, b: bigint) {
-    // if difference > 100 { a > b }
-    // if difference < 100 { a < b }
-    // if difference == 100 { a == b }
-    let difference = (a * 100n) / b;
-    // Calculate the multiplier
-    return 100n + difference;
+  function setTargetPriceToZero(assetName: string) {
+    const data = fs.readFileSync(jsonFilepath, "utf8");
+
+    const jsonData = JSON.parse(data);
+    jsonData[assetName] = "0";
+    const jsonAddressInfo = JSON.stringify(jsonData);
+
+    fs.writeFile(jsonFilepath, jsonAddressInfo, "utf8", function (err) {
+      if (err) {
+        return console.log(err);
+      }
+    });
   }
 
   setInterval(makeTx, tradeFrequency);
