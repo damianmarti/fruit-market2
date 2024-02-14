@@ -171,6 +171,17 @@ yarn oracle:update
 
 ----
 
+⚙️ running yarn commands as a pm2 service example:
+
+```bash
+pm2 start yarn --name yarnStart -- start
+pm2 start yarn --name yarnChain -- chain
+pm2 start yarn --name yarnBots -- trading:bots
+pm2 start yarn --name yarnOracle -- oracle:update
+```
+
+----
+
 
 
 ## 🏗 Built using Scaffold-ETH 2
