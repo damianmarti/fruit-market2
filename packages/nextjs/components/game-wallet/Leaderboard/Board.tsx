@@ -1,5 +1,5 @@
 import { Address } from "~~/components/scaffold-eth";
-import scaffoldConfig from "~~/scaffold.config";
+import CashIcon from "~~/icons/CashIcon";
 
 export const Board = ({ leaderboard, isLoading }: { leaderboard: any[]; isLoading: boolean }) => {
   if (isLoading) {
@@ -30,7 +30,7 @@ export const Board = ({ leaderboard, isLoading }: { leaderboard: any[]; isLoadin
                   <Address address={data.address} alias={data.alias} copy={false} />
                 </td>
                 <td className="text-right">
-                  {scaffoldConfig.saltToken.emoji} {data.balance}
+                  <CashIcon width="35" height="23" className="inline" /> {data.balance}
                 </td>
               </tr>
             ))}
