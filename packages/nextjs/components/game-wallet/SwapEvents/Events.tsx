@@ -19,11 +19,11 @@ export const Events = ({ events }: { events: any[] }) => {
   return (
     <div className="flex flex-row">
       <div className="flex flex-col gap-x-20 justify-center">
-        {events.map((data, index) => (
-          <div className="flex gap-2 animate-fadeIn" key={index}>
-            <div className="flex gap-2 p-4 items-center">
-              <div className="flex w-[380px]">
-                <Address address={data.address} alias={aliases[data.address]} disableAddressLink={true} />
+        {events.slice(0, 15).map((data, index) => (
+          <div className="flex gap-2 animate-fadeIn bg-slate-100 rounded-xl m-1" key={index}>
+            <div className="flex gap-2 p-3 items-center">
+              <div className="flex w-[350px]">
+                <Address address={data.address} alias={aliases[data.address]} disableAddressLink={true} copy={false} />
                 {data.tradeDirection === 0n ? (
                   <span className="pl-2">
                     <span className="pr-2">
