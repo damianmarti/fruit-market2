@@ -1,29 +1,9 @@
 import { useState } from "react";
 import { createWalletClient, http, parseEther } from "viem";
-import { type Chain } from "viem";
 import { hardhat } from "viem/chains";
 import { useAccount, useNetwork } from "wagmi";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
 import { useAccountBalance, useTransactor } from "~~/hooks/scaffold-eth";
-
-const localRpcUrl = process.env.NEXT_PUBLIC_CUSTOM_LOCAL_RPC;
-
-console.log("localRpcUrl", localRpcUrl);
-
-const customChain = {
-  id: 31_337,
-  name: "cloud",
-  network: "cloud",
-  nativeCurrency: {
-    decimals: 18,
-    name: "Ether",
-    symbol: "ETH",
-  },
-  rpcUrls: {
-    default: { http: [localRpcUrl ? localRpcUrl : "http://127.0.0.1:8545"] },
-    public: { http: [localRpcUrl ? localRpcUrl : "http://127.0.0.1:8545"] },
-  },
-} as const satisfies Chain;
 
 // Number of ETH faucet sends to an address
 const NUM_OF_ETH = "1";
@@ -51,7 +31,7 @@ export const FaucetButton = () => {
     try {
       setLoading(true);
       await faucetTxn({
-        chain: customChain,
+        chain: hardhat,
         account: FAUCET_ADDRESS,
         to: address,
         value: parseEther(NUM_OF_ETH),
@@ -64,7 +44,7 @@ export const FaucetButton = () => {
   };
 
   // Render only on local chain
-  if (ConnectedChain?.id !== hardhat.id) {
+  if (ConnectedChain?.id !== hardhat.id || ConnectedChain?.name === "cloud") {
     return null;
   }
 
