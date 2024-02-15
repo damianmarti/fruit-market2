@@ -24,6 +24,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
+      - name: Copy tokens config
+        run: cp packages/nextjs/tokens.config.ts.example packages/nextjs/tokens.config.ts
+
       - name: Setup node env
         uses: actions/setup-node@v3
         with:
