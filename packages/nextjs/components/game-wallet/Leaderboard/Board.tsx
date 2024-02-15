@@ -21,13 +21,13 @@ export const Board = ({ leaderboard, isLoading }: { leaderboard: any[]; isLoadin
   return (
     <div className="flex flex-col">
       <div className="flex gap-x-20 justify-center">
-        <table className="table table-zebra self-start">
+        <table className="table self-start">
           <tbody>
-            {leaderboard.map((data, index) => (
+            {leaderboard.slice(0, 15).map((data, index) => (
               <tr key={JSON.stringify(leaderboard[0]) + index} className="text-center">
                 <td>{index + 1}</td>
                 <td>
-                  <Address address={data.address} alias={data.alias} />
+                  <Address address={data.address} alias={data.alias} copy={false} />
                 </td>
                 <td className="text-right">
                   {scaffoldConfig.saltToken.emoji} {data.balance}

@@ -48,11 +48,14 @@ const PricesBoxes = () => {
   }, scaffoldConfig.tokenLeaderboardPollingInterval);
 
   return (
-    <div className="flex flex-col pt-2 gap-[20px] md:flex-row">
+    <div className="flex flex-row flex-wrap pt-2 gap-[14px]">
       {tokens.map(token => (
-        <div className="bg-base-300 rounded-xl w-[120px] p-4 text-center text-xl font-bold" key={token.name}>
-          <h2>{token.emoji}</h2>
-          <p className="pt-8">{isLoading ? "..." : `${saltEmoji} ${prices[token.name]}`}</p>
+        <div className="flex bg-base-300 rounded-xl w-[132px] p-2 text-center bg-white" key={token.name}>
+          <div className="text-2xl">{token.emoji}</div>
+          <div className="text-sm">
+            <h2 className="font-bold">{token.name}</h2>
+            <p className="m-1">{isLoading ? "..." : `${saltEmoji} ${prices[token.name]}`}</p>
+          </div>
         </div>
       ))}
     </div>

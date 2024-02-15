@@ -47,7 +47,7 @@ export const Leaderboard = () => {
   }, scaffoldConfig.tokenLeaderboardPollingInterval);
 
   return (
-    <div className="flex flex-col pt-2 gap-[100px] md:flex-row">
+    <div className="flex flex-col gap-[100px] md:flex-row">
       <Board leaderboard={leaderboard} isLoading={isLoading} />
     </div>
   );
