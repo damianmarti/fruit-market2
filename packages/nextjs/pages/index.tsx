@@ -12,6 +12,7 @@ import { LandOwnership } from "~~/components/land/LandOwnership";
 import { BurnerSigner } from "~~/components/scaffold-eth/BurnerSigner";
 import { InputBase } from "~~/components/scaffold-eth/Input";
 import { useScaffoldContract, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
+import CashIcon from "~~/icons/CashIcon";
 import scaffoldConfig from "~~/scaffold.config";
 import { TTokenBalance, TTokenInfo } from "~~/types/wallet.d";
 import { etherFormatted, etherFormattedPlusOne } from "~~/utils/etherFormatted";
@@ -53,8 +54,6 @@ const Home: NextPageWithLayout = () => {
 
   const tokenContracts: { [key: string]: any } = {};
   const dexContracts: { [key: string]: any } = {};
-
-  const saltEmoji = scaffoldConfig.saltToken.emoji;
 
   tokens.forEach(token => {
     const contractName: ContractName = `${token.name}Token` as ContractName;
@@ -225,7 +224,8 @@ const Home: NextPageWithLayout = () => {
       <div className="flex flex-col gap-2 max-w-[430px] text-center m-auto">
         {checkedIn && (
           <p className="font-bold">
-            Total Net Worth: {saltEmoji} {loadingTokensData ? "..." : etherFormatted(totalNetWorth)}
+            Total Net Worth: <CashIcon width="53" height="35" className="inline" />{" "}
+            {loadingTokensData ? "..." : etherFormatted(totalNetWorth)}
           </p>
         )}
 

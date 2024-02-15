@@ -1,12 +1,10 @@
 import { Address } from "~~/components/scaffold-eth";
 import { useAliases } from "~~/hooks/useAliases";
-import scaffoldConfig from "~~/scaffold.config";
+import CashIcon from "~~/icons/CashIcon";
 import { etherFormatted } from "~~/utils/etherFormatted";
 
 export const Events = ({ events }: { events: any[] }) => {
   const aliases = useAliases({ enablePolling: false });
-
-  const saltEmoji = scaffoldConfig.saltToken.emoji;
 
   if (events.length === 0) {
     return (
@@ -27,7 +25,7 @@ export const Events = ({ events }: { events: any[] }) => {
                 {data.tradeDirection === 0n ? (
                   <span className="pl-2">
                     <span className="pr-2">
-                      {saltEmoji}
+                      <CashIcon width="35" height="23" className="inline" />
                       {etherFormatted(data.tokensSwapped)}
                     </span>
                     -&gt;
@@ -44,7 +42,7 @@ export const Events = ({ events }: { events: any[] }) => {
                     </span>
                     -&gt;
                     <span className="pl-2">
-                      {saltEmoji}
+                      <CashIcon width="35" height="23" className="inline" />
                       {etherFormatted(data.tokensReceived)}
                     </span>
                   </span>

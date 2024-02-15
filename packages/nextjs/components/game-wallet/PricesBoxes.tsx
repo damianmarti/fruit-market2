@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useInterval } from "usehooks-ts";
+import CashIcon from "~~/icons/CashIcon";
 import scaffoldConfig from "~~/scaffold.config";
 import { notification } from "~~/utils/scaffold-eth";
 
@@ -12,7 +13,6 @@ const PricesBoxes = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const tokens = scaffoldConfig.tokens;
-  const saltEmoji = scaffoldConfig.saltToken.emoji;
 
   const fetchPrices = async () => {
     try {
@@ -54,7 +54,16 @@ const PricesBoxes = () => {
           <div className="text-2xl">{token.emoji}</div>
           <div className="text-sm">
             <h2 className="font-bold">{token.name}</h2>
-            <p className="m-1">{isLoading ? "..." : `${saltEmoji} ${prices[token.name]}`}</p>
+            <p className="m-1">
+              {isLoading ? (
+                "..."
+              ) : (
+                <>
+                  <CashIcon width="25" height="16" className="inline" />
+                  {prices[token.name]}
+                </>
+              )}
+            </p>
           </div>
         </div>
       ))}

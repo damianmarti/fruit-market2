@@ -6,6 +6,7 @@ import { useAccount } from "wagmi";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { InputBase } from "~~/components/scaffold-eth";
 import { useScaffoldContract, useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import CashIcon from "~~/icons/CashIcon";
 import scaffoldConfig from "~~/scaffold.config";
 import { notification } from "~~/utils/scaffold-eth";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
@@ -32,7 +33,6 @@ export const TokenSell = ({
 
   const tokenName: TokenName = token.replace("Token", "") as TokenName;
   const tokenEmoji = scaffoldConfig.tokens.find(t => token === t.contractName)?.emoji;
-  const saltEmoji = scaffoldConfig.saltToken.emoji;
 
   const dexContractName: ContractName = `BasicDex${tokenName}` as ContractName;
 
@@ -170,7 +170,7 @@ export const TokenSell = ({
       </div>
       <div className="flex justify-center">
         <div className="w-[200px]">
-          {saltEmoji}
+          <CashIcon width="53" height="35" className="inline" />
           {priceLoading ? (
             <span className="animate-pulse">...</span>
           ) : (
