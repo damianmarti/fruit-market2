@@ -1,3 +1,5 @@
+packages/trading-bots/data.json
+packages/nextjs/tokens.config.ts
 packages/trading-bots/*.txt
 packages/oracle/prompt.txt
 packages/oracle/priceList.json

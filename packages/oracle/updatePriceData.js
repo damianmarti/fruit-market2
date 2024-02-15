@@ -2,13 +2,12 @@ import { Configuration, OpenAIApi } from "openai";
 import fs from "fs";
 import dotenv from "dotenv";
 dotenv.config();
-if(!process.env.OPENAI_API_KEY){
-  console.log("Please set OPENAI_API_KEY in your environment variables")
-  process.exit()
+if (!process.env.OPENAI_API_KEY) {
+  console.log("Please set OPENAI_API_KEY in your environment variables");
+  process.exit();
 }
 
 console.log("📺 node updatePriceData");
-
 
 const configuration = new Configuration({
   //apiKey: "",//,
@@ -76,23 +75,42 @@ const generatePrices = async (assetList, currentPrices) => {
   }
 };
 
-console.log("🔮 generating first prices...");
+while (true) {
 
-const assetList = await fs.readFileSync("assetList.json", "utf8");
+
+console.log("🔮 updating first prices...");
 
 const currentPrices = await fs.readFileSync(
-  "../trading-bots/data.json",
+  "priceList.json",
   "utf8"
 );
+console.log("it starts asas ",currentPrices);
 
-console.log("currentPrices", currentPrices);
+const parsedCurrentPrices = JSON.parse(currentPrices);
 
-const priceList = await generatePrices(assetList, currentPrices);
+console.log("parsedCurrentPrices",parsedCurrentPrices);
 
+//for each key in object parsedCurrentPrices
+for (const asset in parsedCurrentPrices) {
+  const fnum = parseFloat(parsedCurrentPrices[asset]);
+  console.log("parsed float to ",fnum)
+  if(Math.random() > 0.5){
+    parsedCurrentPrices[asset] = (fnum * 1.1).toFixed(2);
+  }else{
+    parsedCurrentPrices[asset] = (fnum * 0.9).toFixed(2);
+  }
+}
+
+console.log("finally parsedCurrentPrices", parsedCurrentPrices);
+
+const priceList = JSON.stringify(parsedCurrentPrices); //await generatePrices(assetList, currentPrices);
 
 //let's write this to a rawAssetList.json file
-await fs.writeFileSync("priceList.json", JSON.stringify(priceList));
+await fs.writeFileSync("priceList.json", priceList);
 
 console.log("👀 NEW priceList", priceList);
 
-await fs.writeFileSync("../trading-bots/data.json", JSON.stringify(priceList));
+await fs.writeFileSync("../trading-bots/data.json", priceList);
+
+await new Promise((r) => setTimeout(r, 20000));
+}

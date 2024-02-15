@@ -90,10 +90,14 @@ console.log("🔮 generating first prices...");
 const assetList = await fs.readFileSync("assetList.json", "utf8");
 
 const priceList = await generatePrices(assetList);
+const priceListString = JSON.stringify(priceList);
 
+
+console.log("👀 priceListString", priceListString);
 //let's write this to a rawAssetList.json file
-await fs.writeFileSync("priceList.json", JSON.stringify(priceList));
+await fs.writeFileSync("priceList.json", priceListString);
 
-console.log("👀 priceList", priceList);
+await fs.writeFileSync("../trading-bots/data.json", priceListString);
 
-await fs.writeFileSync("../trading-bots/data.json", JSON.stringify(priceList));
+
+console.log("👀 priceListString", priceListString);
