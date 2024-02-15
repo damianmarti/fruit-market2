@@ -54,6 +54,8 @@ const Home: NextPageWithLayout = () => {
 
   const tokenContracts: { [key: string]: any } = {};
   const dexContracts: { [key: string]: any } = {};
+  const tokenContractsAddresses: string[] = [];
+  const dexContractsAddresses: string[] = [];
 
   tokens.forEach(token => {
     const contractName: ContractName = `${token.name}Token` as ContractName;
@@ -64,6 +66,7 @@ const Home: NextPageWithLayout = () => {
     const { data } = useScaffoldContract({ contractName });
     if (data) {
       tokenContracts[token.name] = data;
+      tokenContractsAddresses.push(data.address);
     }
 
     // The tokens array should not change, so this should be safe. Anyway, we can refactor this later.
@@ -71,22 +74,27 @@ const Home: NextPageWithLayout = () => {
     const { data: dex } = useScaffoldContract({ contractName: contractDexName });
     if (dex) {
       dexContracts[token.name] = dex;
+      dexContractsAddresses.push(dex.address);
     }
   });
+
+  const { data: fruitTokensDataContract } = useScaffoldContract({ contractName: "FruitTokensData" });
 
   const updateTokensData = async () => {
     const newTokenData: { [key: string]: TTokenBalance } = {};
     let total = balanceSalt || 0n;
 
-    for (let i = 0; i < tokens.length; i++) {
-      const token = tokens[i];
-      const tokenContract = tokenContracts[token.name];
-      const dexContract = dexContracts[token.name];
+    if (address && fruitTokensDataContract && tokenContractsAddresses.length > 0 && dexContractsAddresses.length > 0) {
+      const balances = await fruitTokensDataContract.read.balancesOf([address, tokenContractsAddresses]);
+      const prices = await fruitTokensDataContract.read.assetOutPrices([dexContractsAddresses]);
+      const pricesIn = await fruitTokensDataContract.read.assetInPrices([dexContractsAddresses]);
 
-      if (tokenContract && dexContract && address) {
-        const balance: bigint = await tokenContract.read.balanceOf([address]);
-        const price: bigint = await dexContract.read.assetOutPrice([parseEther("1")]);
-        const priceIn: bigint = await dexContract.read.assetInPrice([parseEther("1")]);
+      for (let i = 0; i < tokens.length; i++) {
+        const token = tokens[i];
+
+        const balance: bigint = balances[i];
+        const price: bigint = prices[i];
+        const priceIn: bigint = pricesIn[i];
         const value: bigint = (price * balance) / parseEther("1");
 
         newTokenData[token.name] = {

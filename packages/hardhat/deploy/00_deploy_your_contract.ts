@@ -306,6 +306,14 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     to: YOUR_LOCAL_BURNER_ADDRESS,
     value: hre.ethers.utils.parseEther("15"),
   });
+
+  await deploy("FruitTokensData", {
+    from: deployer,
+    args: [],
+    log: true,
+    autoMine: true,
+    contract: "FruitTokensData",
+  });
 };
 
 export default deployYourContract;
