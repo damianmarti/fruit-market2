@@ -1,7 +1,15 @@
 import { Address } from "~~/components/scaffold-eth";
 import CashIcon from "~~/icons/CashIcon";
 
-export const Board = ({ leaderboard, isLoading }: { leaderboard: any[]; isLoading: boolean }) => {
+export const Board = ({
+  leaderboard,
+  isLoading,
+  maxUsers,
+}: {
+  leaderboard: any[];
+  isLoading: boolean;
+  maxUsers?: number;
+}) => {
   if (isLoading) {
     return (
       <div>
@@ -23,7 +31,7 @@ export const Board = ({ leaderboard, isLoading }: { leaderboard: any[]; isLoadin
       <div className="flex gap-x-20 justify-center">
         <table className="table self-start">
           <tbody>
-            {leaderboard.slice(0, 15).map((data, index) => (
+            {(maxUsers ? leaderboard.slice(0, 15) : leaderboard).map((data, index) => (
               <tr key={JSON.stringify(leaderboard[0]) + index} className="text-center">
                 <td>{index + 1}</td>
                 <td>

@@ -20,7 +20,7 @@ const Dashboard: NextPageWithLayout = () => {
             <div className="p-2">
               <h1 className="text-2xl font-bold text-center">Leaderboard</h1>
             </div>
-            <Leaderboard />
+            <Leaderboard maxUsers={15} />
           </div>
           <div className="flex flex-col items-stretch place-content-start content-start w-[50%] bg-white mt-4 mr-4 rounded-3xl p-2">
             <div className="p-2">

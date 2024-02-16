@@ -4,7 +4,7 @@ import { useInterval } from "usehooks-ts";
 import scaffoldConfig from "~~/scaffold.config";
 import { notification } from "~~/utils/scaffold-eth";
 
-export const Leaderboard = () => {
+export const Leaderboard = ({ maxUsers }: { maxUsers?: number }) => {
   type LeaderboardData = {
     address: string;
     balance: bigint;
@@ -48,7 +48,7 @@ export const Leaderboard = () => {
 
   return (
     <div className="flex flex-col gap-[100px] md:flex-row">
-      <Board leaderboard={leaderboard} isLoading={isLoading} />
+      <Board leaderboard={leaderboard} isLoading={isLoading} maxUsers={maxUsers} />
     </div>
   );
 };
