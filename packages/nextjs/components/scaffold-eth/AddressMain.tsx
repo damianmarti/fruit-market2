@@ -2,7 +2,7 @@ import { useState } from "react";
 import { PunkBlockie } from "../game-wallet/PunkBlockie";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { isAddress } from "viem";
-import { CheckCircleIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon, DocumentDuplicateIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { getBlockExplorerAddressLink, getTargetNetwork } from "~~/utils/scaffold-eth";
 
 type TAddressProps = {
@@ -63,6 +63,17 @@ export const AddressMain = ({ address, disableAddressLink, format, alias }: TAdd
                 {displayAddress}
               </a>
             )}
+            <div className="text-xl font-bold flex gap-1">
+              {alias ? (
+                <span title="Checked-in">
+                  <CheckCircleIcon className="w-4 text-green-800" />
+                </span>
+              ) : (
+                <span title="Not checked-in">
+                  <ExclamationCircleIcon className="w-4 text-red-800" />
+                </span>
+              )}
+            </div>
             {addressCopied ? (
               <CheckCircleIcon
                 className="ml-1.5 text-xl font-normal text-sky-600 h-5 w-5 cursor-pointer"

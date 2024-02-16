@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAccount } from "wagmi";
-import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { QrCodeButton } from "~~/components/game-wallet/QrCodeButton";
 import { Balance, FaucetButton } from "~~/components/scaffold-eth";
 import { AddressMain } from "~~/components/scaffold-eth/AddressMain";
@@ -47,20 +46,11 @@ export const Header = ({ alias }: { alias: string }) => {
       <div className="flex flex-col gap-2 pt-2">
         <>
           <div className="flex flex-col items-center mb-6 gap-4">
-            <AddressMain address={address} disableAddressLink={true} alias={alias} />
+            <div>
+              <AddressMain address={address} disableAddressLink={true} alias={alias} />
+            </div>
             <div className="flex gap-4 items-center w-11/12 bg-white py-1 px-2 rounded-xl mt-4">
               <TokenBalance amount={balance} />
-              <div className="text-xl font-bold flex gap-1">
-                {alias ? (
-                  <span title="Checked-in">
-                    <CheckCircleIcon className="w-4 text-green-800" />
-                  </span>
-                ) : (
-                  <span title="Not checked-in">
-                    <ExclamationCircleIcon className="w-4 text-red-800" />
-                  </span>
-                )}
-              </div>
             </div>
           </div>
           <div className="flex gap-6 justify-around mb-8">
