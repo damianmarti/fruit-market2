@@ -30,6 +30,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppPropsWithLayout) => {
   // This variable is required for initial client side rendering of correct theme for RainbowKit
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   const { isDarkMode } = useDarkMode();
+  const [alias, setAlias] = useState("");
 
   useEffect(() => {
     if (price > 0) {
@@ -46,7 +47,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppPropsWithLayout) => {
     (page => (
       <div className="flex flex-col items-center justify-center py-2">
         <div className="md:min-w-[32rem] p-6 my-14 md:my-10 w-full md:w-[35%]">
-          <Header />
+          <Header alias={alias} />
           <main className="md:static fixed bottom-0 left-0 w-full pb-4 bg-white md:bg-[#ffffff00] h-[50vh] md:h-full overflow-y-scroll rounded-t-3xl p-2 no-scrollbar">
             {page}
           </main>
@@ -63,7 +64,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppPropsWithLayout) => {
         avatar={BlockieAvatar}
         theme={isDarkTheme ? darkTheme() : lightTheme()}
       >
-        {getLayout(<Component {...pageProps} />)}
+        {getLayout(<Component alias={alias} setAlias={setAlias} {...pageProps} />)}
         <Toaster />
       </RainbowKitProvider>
     </WagmiConfig>

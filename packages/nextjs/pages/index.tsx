@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import type { NextPageWithLayout } from "./_app";
 import { useInterval } from "usehooks-ts";
 import { formatUnits, parseEther } from "viem";
@@ -10,7 +10,6 @@ import { TokenBuy } from "~~/components/game-wallet/TokenBuy";
 import { TokenSell } from "~~/components/game-wallet/TokenSell";
 import { LandOwnership } from "~~/components/land/LandOwnership";
 import { BurnerSigner } from "~~/components/scaffold-eth/BurnerSigner";
-import { InputBase } from "~~/components/scaffold-eth/Input";
 import { useScaffoldContract, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import CashIcon from "~~/icons/CashIcon";
 import scaffoldConfig from "~~/scaffold.config";
@@ -21,14 +20,13 @@ import { ContractName } from "~~/utils/scaffold-eth/contract";
 
 type DexesPaused = { [key: string]: boolean };
 
-const Home: NextPageWithLayout = () => {
+const Home: NextPageWithLayout<{ setAlias: Dispatch<SetStateAction<string>> }> = ({ setAlias }) => {
   const tokens = scaffoldConfig.tokens;
 
   const { address } = useAccount();
   const [processing, setProcessing] = useState(false);
   const [loadingCheckedIn, setLoadingCheckedIn] = useState(true);
   const [checkedIn, setCheckedIn] = useState(false);
-  const [alias, setAlias] = useState("");
   const [swapToken, setSwapToken] = useState<TTokenInfo>(scaffoldConfig.tokens[0]);
   const [showBuy, setShowBuy] = useState(false);
   const [showSell, setShowSell] = useState(false);
@@ -43,7 +41,6 @@ const Home: NextPageWithLayout = () => {
   const message = {
     action: "user-checkin",
     address: address,
-    alias: alias,
   };
 
   const { data: balanceSalt } = useScaffoldContractRead({
@@ -51,6 +48,30 @@ const Home: NextPageWithLayout = () => {
     functionName: "balanceOf",
     args: [address],
   });
+
+  useEffect(() => {
+    const updateAlias = async () => {
+      if (address) {
+        try {
+          const response = await fetch(`/api/alias/${address}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data) {
+            setAlias(data);
+          }
+        } catch (e) {
+          console.log("Error checking if user has alias", e);
+        }
+      }
+    };
+    updateAlias();
+  }, [address]);
 
   const tokenContracts: { [key: string]: any } = {};
   const dexContracts: { [key: string]: any } = {};
@@ -186,7 +207,7 @@ const Home: NextPageWithLayout = () => {
 
   const handleSignature = async ({ signature }: { signature: string }) => {
     setProcessing(true);
-    if (!address || !alias) {
+    if (!address) {
       setProcessing(false);
       return;
     }
@@ -198,14 +219,16 @@ const Home: NextPageWithLayout = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ signature, signerAddress: address, alias: alias }),
+        body: JSON.stringify({ signature, signerAddress: address }),
       });
+
+      const result = await response.json();
 
       if (response.ok) {
         setCheckedIn(true);
-        notification.success("Checked in!");
+        notification.success(result.message);
+        setAlias(result.alias);
       } else {
-        const result = await response.json();
         notification.error(result.error);
       }
     } catch (e) {
@@ -239,16 +262,6 @@ const Home: NextPageWithLayout = () => {
 
         {!checkedIn && !loadingCheckedIn && (
           <div>
-            <div>
-              <InputBase
-                value={alias}
-                onChange={v => {
-                  setAlias(v);
-                }}
-                placeholder={alias ? alias : "Username"}
-              />
-            </div>
-
             <BurnerSigner
               className={`btn btn-primary w-full mt-4 ${processing || loadingCheckedIn ? "loading" : ""}`}
               disabled={processing || loadingCheckedIn || checkedIn}
