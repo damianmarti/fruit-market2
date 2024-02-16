@@ -85,9 +85,34 @@ const Home: NextPageWithLayout = () => {
     let total = balanceSalt || 0n;
 
     if (address && fruitTokensDataContract && tokenContractsAddresses.length > 0 && dexContractsAddresses.length > 0) {
-      const balances = await fruitTokensDataContract.read.balancesOf([address, tokenContractsAddresses]);
-      const prices = await fruitTokensDataContract.read.assetOutPrices([dexContractsAddresses]);
-      const pricesIn = await fruitTokensDataContract.read.assetInPrices([dexContractsAddresses]);
+      const size = 10;
+      const tokenContractsAddressesArrays = [];
+      const dexContractsAddressesArrays = [];
+
+      while (tokenContractsAddresses.length > 0) {
+        tokenContractsAddressesArrays.push(tokenContractsAddresses.splice(0, size));
+      }
+
+      while (dexContractsAddresses.length > 0) {
+        dexContractsAddressesArrays.push(dexContractsAddresses.splice(0, size));
+      }
+
+      const balances = [];
+      const prices = [];
+      const pricesIn = [];
+
+      for (let i = 0; i < tokenContractsAddressesArrays.length; i++) {
+        const tokenAddresses = tokenContractsAddressesArrays[i];
+        const dexAddresses = dexContractsAddressesArrays[i];
+
+        const newBalances = await fruitTokensDataContract.read.balancesOf([address, tokenAddresses]);
+        const newPrices = await fruitTokensDataContract.read.assetOutPrices([dexAddresses]);
+        const newPricesIn = await fruitTokensDataContract.read.assetInPrices([dexAddresses]);
+
+        balances.push(...newBalances);
+        prices.push(...newPrices);
+        pricesIn.push(...newPricesIn);
+      }
 
       for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i];
