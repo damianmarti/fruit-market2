@@ -36,7 +36,7 @@ export const TokenBalanceRow = ({
           <>
             <button
               onClick={() => handleShowBuy(tokenInfo)}
-              className="btn bg-black btn-xs text-[0.75rem] btn-ghost text-custom-green min-h-6 h-7 capitalize px-4"
+              className="btn bg-black btn-xs text-[0.75rem] btn-ghost text-custom-green min-h-6 h-7 capitalize px-4 hover:bg-custom-green hover:text-white"
               disabled={loading}
             >
               {" "}
@@ -44,7 +44,7 @@ export const TokenBalanceRow = ({
             </button>
             <button
               onClick={() => handleShowSell(tokenInfo)}
-              className="btn btn-secondary btn-xs ml-2 text-[0.75rem] bg-grey-btn btn-ghost min-h-6 h-7 capitalize px-4"
+              className="btn bg-black btn-secondary btn-xs ml-2 text-[0.75rem] btn-ghost text-custom-blue min-h-6 h-7 capitalize px-4 hover:bg-custom-blue hover:text-white"
               disabled={loading}
             >
               Sell

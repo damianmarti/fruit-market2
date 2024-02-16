@@ -110,6 +110,7 @@ module.exports = {
         "grey-light": "#F5F5F5",
         "grey-btn": "#B5B5B5",
         "custom-green": "#5DE347",
+        "custom-blue": "#629FFC",
         "custom-black": "#0D0D0D",
       },
     },
