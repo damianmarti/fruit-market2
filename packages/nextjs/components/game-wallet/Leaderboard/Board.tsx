@@ -27,7 +27,7 @@ export const Board = ({ leaderboard, isLoading }: { leaderboard: any[]; isLoadin
               <tr key={JSON.stringify(leaderboard[0]) + index} className="text-center">
                 <td>{index + 1}</td>
                 <td>
-                  <Address address={data.address} alias={data.alias} copy={false} />
+                  <Address address={data.address} alias={data.alias} copy={false} disableAddressLink />
                 </td>
                 <td className="text-right">
                   <CashIcon width="35" height="23" className="inline" /> {data.balance}
