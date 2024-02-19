@@ -2,6 +2,8 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import type { NextPageWithLayout } from "./_app";
 import { useInterval } from "usehooks-ts";
 import { formatUnits, parseEther } from "viem";
+import { createWalletClient, http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
 import { useAccount } from "wagmi";
 import { BackwardIcon } from "@heroicons/react/24/outline";
 import PriceChart from "~~/components/game-wallet/PriceChart";
@@ -9,8 +11,8 @@ import { TokenBalanceRow } from "~~/components/game-wallet/TokenBalanceRow";
 import { TokenBuy } from "~~/components/game-wallet/TokenBuy";
 import { TokenSell } from "~~/components/game-wallet/TokenSell";
 import { LandOwnership } from "~~/components/land/LandOwnership";
-import { BurnerSigner } from "~~/components/scaffold-eth/BurnerSigner";
 import { useScaffoldContract, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
+import { loadBurnerSK } from "~~/hooks/scaffold-eth";
 import CashIcon from "~~/icons/CashIcon";
 import scaffoldConfig from "~~/scaffold.config";
 import { TTokenBalance, TTokenInfo } from "~~/types/wallet.d";
@@ -24,7 +26,6 @@ const Home: NextPageWithLayout<{ setAlias: Dispatch<SetStateAction<string>> }> =
   const tokens = scaffoldConfig.tokens;
 
   const { address } = useAccount();
-  const [processing, setProcessing] = useState(false);
   const [loadingCheckedIn, setLoadingCheckedIn] = useState(true);
   const [checkedIn, setCheckedIn] = useState(false);
   const [swapToken, setSwapToken] = useState<TTokenInfo>(scaffoldConfig.tokens[0]);
@@ -230,38 +231,57 @@ const Home: NextPageWithLayout<{ setAlias: Dispatch<SetStateAction<string>> }> =
     }
   }, [address]);
 
-  const handleSignature = async ({ signature }: { signature: string }) => {
-    setProcessing(true);
-    if (!address) {
-      setProcessing(false);
-      return;
-    }
+  useEffect(() => {
+    const handleCheckIn = async () => {
+      if (!address) {
+        return;
+      }
 
-    try {
-      // Post the signed message to the API
-      const response = await fetch("/api/check-in", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ signature, signerAddress: address }),
+      const burnerPK = loadBurnerSK();
+
+      const account = privateKeyToAccount(burnerPK);
+
+      const signer = createWalletClient({
+        account,
+        chain: scaffoldConfig.targetNetwork,
+        transport: http(),
       });
 
-      const result = await response.json();
+      // Sign the message
+      const messageString = JSON.stringify(message);
+      const signature = await signer.signMessage({
+        account,
+        message: messageString,
+      });
 
-      if (response.ok) {
-        setCheckedIn(true);
-        notification.success(result.message);
-        setAlias(result.alias);
-      } else {
-        notification.error(result.error);
+      try {
+        // Post the signed message to the API
+        const response = await fetch("/api/check-in", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ signature, signerAddress: address }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          setCheckedIn(true);
+          notification.success(result.message);
+          setAlias(result.alias);
+        } else {
+          notification.error(result.error);
+        }
+      } catch (e) {
+        console.log("Error checking in the user", e);
       }
-    } catch (e) {
-      console.log("Error checking in the user", e);
-    } finally {
-      setProcessing(false);
+    };
+
+    if (address && !loadingCheckedIn && !checkedIn) {
+      handleCheckIn();
     }
-  };
+  }, [address, loadingCheckedIn, checkedIn]);
 
   const handleShowBuy = (selectedToken: TTokenInfo) => {
     console.log("selectedToken emoji: ", selectedToken.emoji);
@@ -285,18 +305,7 @@ const Home: NextPageWithLayout<{ setAlias: Dispatch<SetStateAction<string>> }> =
           </p>
         )}
 
-        {!checkedIn && !loadingCheckedIn && (
-          <div>
-            <BurnerSigner
-              className={`btn btn-primary w-full mt-4 ${processing || loadingCheckedIn ? "loading" : ""}`}
-              disabled={processing || loadingCheckedIn || checkedIn}
-              message={message}
-              handleSignature={handleSignature}
-            >
-              {loadingCheckedIn ? "..." : checkedIn ? "Checked-in" : "Check-in"}
-            </BurnerSigner>
-          </div>
-        )}
+        {!checkedIn && !loadingCheckedIn && <div>Checking-in...</div>}
 
         {checkedIn && !showBuy && !showSell && (
           <>
