@@ -76,41 +76,42 @@ const generatePrices = async (assetList, currentPrices) => {
 };
 
 while (true) {
+  console.log("🔮 updating first prices...");
 
+  const currentPrices = await fs.readFileSync("priceList.json", "utf8");
+  console.log("it starts asas ", currentPrices);
 
-console.log("🔮 updating first prices...");
+  const parsedCurrentPrices = JSON.parse(currentPrices);
 
-const currentPrices = await fs.readFileSync(
-  "priceList.json",
-  "utf8"
-);
-console.log("it starts asas ",currentPrices);
+  console.log("parsedCurrentPrices", parsedCurrentPrices);
 
-const parsedCurrentPrices = JSON.parse(currentPrices);
-
-console.log("parsedCurrentPrices",parsedCurrentPrices);
-
-//for each key in object parsedCurrentPrices
-for (const asset in parsedCurrentPrices) {
-  const fnum = parseFloat(parsedCurrentPrices[asset]);
-  console.log("parsed float to ",fnum)
-  if(Math.random() > 0.5){
-    parsedCurrentPrices[asset] = (fnum * 1.1).toFixed(2);
-  }else{
-    parsedCurrentPrices[asset] = (fnum * 0.9).toFixed(2);
+  //for each key in object parsedCurrentPrices
+  for (const asset in parsedCurrentPrices) {
+    const fnum = parseFloat(parsedCurrentPrices[asset]);
+    console.log("parsed float to ", fnum);
+    if (Math.random() > 0.98) {
+      console.log("SENDING TO THE MOON", asset, fnum * 2);
+      parsedCurrentPrices[asset] = (fnum * 2).toFixed(2);
+    } else if (Math.random() < 0.01) {
+      console.log("CRASH IT", asset, fnum / 2);
+      parsedCurrentPrices[asset] = (fnum / 2).toFixed(2);
+    } else if (Math.random() > 0.5) {
+      parsedCurrentPrices[asset] = (fnum * 1.105).toFixed(2);
+    } else {
+      parsedCurrentPrices[asset] = (fnum * 0.9).toFixed(2);
+    }
   }
-}
 
-console.log("finally parsedCurrentPrices", parsedCurrentPrices);
+  console.log("finally parsedCurrentPrices", parsedCurrentPrices);
 
-const priceList = JSON.stringify(parsedCurrentPrices); //await generatePrices(assetList, currentPrices);
+  const priceList = JSON.stringify(parsedCurrentPrices); //await generatePrices(assetList, currentPrices);
 
-//let's write this to a rawAssetList.json file
-await fs.writeFileSync("priceList.json", priceList);
+  //let's write this to a rawAssetList.json file
+  await fs.writeFileSync("priceList.json", priceList);
 
-console.log("👀 NEW priceList", priceList);
+  console.log("👀 NEW priceList", priceList);
 
-await fs.writeFileSync("../trading-bots/data.json", priceList);
+  await fs.writeFileSync("../trading-bots/data.json", priceList);
 
-await new Promise((r) => setTimeout(r, 20000));
+  await new Promise((r) => setTimeout(r, 40000));
 }

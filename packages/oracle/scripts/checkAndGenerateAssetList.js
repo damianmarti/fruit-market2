@@ -20,7 +20,7 @@ export async function checkAndGenerateAssetList() {
         color: "yellow",
       }).start();
 
-      exec("node generateRawAssetList.js 42", (error, stdout, stderr) => {
+      exec("node generateRawAssetList.js 16", (error, stdout, stderr) => {
         spinner.stop();
         if (error) {
           console.error(
@@ -47,7 +47,7 @@ export async function checkAndGenerateAssetList() {
         color: "yellow",
       }).start();
 
-      exec("node cleanRawAssets.js 32", (error, stdout, stderr) => {
+      exec("node cleanRawAssets.js 10", (error, stdout, stderr) => {
         spinner.stop();
         if (error) {
           console.error(chalk.red(`Error cleaning assets: ${error.message}`));
