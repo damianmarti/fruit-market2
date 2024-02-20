@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "setup": "ts-node ts-scripts/batchPrep",
     "trade": "ts-node ts-scripts/tradeDex",
-    "bots": "ts-node ts-scripts/allBots"
+    "bots": "ts-node ts-scripts/allBots",
+    "botInfo": "ts-node ts-scripts/botInfo"
   },
   "author": "",
   "license": "ISC",
