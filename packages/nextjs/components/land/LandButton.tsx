@@ -6,9 +6,10 @@ interface LandButtonProps {
   id: number;
   contractMapData: any;
   canHarvestAll: any;
+  rottenAll: any;
 }
 
-export const LandButton = ({ id, contractMapData, canHarvestAll }: LandButtonProps) => {
+export const LandButton = ({ id, contractMapData, canHarvestAll, rottenAll }: LandButtonProps) => {
   const { address } = useAccount();
 
   const [loadingApproval, setLoadingApproval] = useState(false);
@@ -21,6 +22,10 @@ export const LandButton = ({ id, contractMapData, canHarvestAll }: LandButtonPro
   });
 
   const isOwnedByMe = contractMapData && contractMapData[id] && contractMapData[id].owner === address;
+  const isAvailable =
+    contractMapData &&
+    contractMapData[id] &&
+    contractMapData[id].owner === "0x0000000000000000000000000000000000000000";
 
   const sprite = contractMapData && contractMapData[id] && contractMapData[id].sprite;
 
@@ -35,6 +40,12 @@ export const LandButton = ({ id, contractMapData, canHarvestAll }: LandButtonPro
   const { writeAsync: harvestStrawberries } = useScaffoldContractWrite({
     contractName: "Land",
     functionName: "harvest",
+    args: [BigInt(id)],
+  });
+
+  const { writeAsync: plantAgainStrawberries } = useScaffoldContractWrite({
+    contractName: "Land",
+    functionName: "farmAgain",
     args: [BigInt(id)],
   });
 
@@ -56,7 +67,23 @@ export const LandButton = ({ id, contractMapData, canHarvestAll }: LandButtonPro
         </button>,
       );
     } else if (sprite === 2) {
-      if (canHarvestAll && !canHarvestAll[id]) {
+      if (rottenAll && rottenAll[id]) {
+        landButtons.push(
+          <button
+            className="btn btn-secondary"
+            disabled={loadingApproval}
+            onClick={() => {
+              setLoadingApproval(true);
+              plantAgainStrawberries();
+              setTimeout(() => {
+                setLoadingApproval(false);
+              }, 5000);
+            }}
+          >
+            🥀 Rotten Strawberries! Plant again on Land #{id}
+          </button>,
+        );
+      } else if (canHarvestAll && !canHarvestAll[id]) {
         landButtons.push(
           <button className="btn btn-secondary" disabled={true}>
             👨‍🌾 Waiting for harvest
@@ -81,21 +108,29 @@ export const LandButton = ({ id, contractMapData, canHarvestAll }: LandButtonPro
       }
     }
   } else {
-    landButtons.push(
-      <button
-        className="btn btn-secondary"
-        disabled={loadingApproval}
-        onClick={() => {
-          setLoadingApproval(true);
-          claimLand();
-          setTimeout(() => {
-            setLoadingApproval(false);
-          }, 5000);
-        }}
-      >
-        📑 Claim Land #{id} for 💸 10 Credits
-      </button>,
-    );
+    if (isAvailable) {
+      landButtons.push(
+        <button
+          className="btn btn-secondary"
+          disabled={loadingApproval}
+          onClick={() => {
+            setLoadingApproval(true);
+            claimLand();
+            setTimeout(() => {
+              setLoadingApproval(false);
+            }, 5000);
+          }}
+        >
+          📑 Claim Land #{id} for 💸 10 Credits
+        </button>,
+      );
+    } else {
+      landButtons.push(
+        <button className="btn btn-secondary" disabled={true}>
+          🏡 Land #{id} is owned
+        </button>,
+      );
+    }
   }
 
   return (

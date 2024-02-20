@@ -279,12 +279,22 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     contract: "Land",
   });
 
-  //put some strawberries into the land contract (really it should just get mint privs right?)
-
-  // LAND CONTRACT WONT WORK ANY MORE BUT WE WONT ALWAYS HAVE STRAWBERRIES 🍓
-
-  console.log("sending tokens to land contract");
-  await tokensContracts[STRAWBS].transfer(landContract.address, hre.ethers.utils.parseEther("100"));
+  // land contract needs to be able to mint all tokens
+  for (let i = 0; i < tokens.length; i++) {
+    const hasRole = await tokensContracts[i].hasRole(
+      hre.ethers.utils.keccak256(hre.ethers.utils.toUtf8Bytes("MINTER_ROLE")),
+      landContract.address,
+    );
+    console.log("land has token minter role: ", tokens[i].name, hasRole);
+    if (hasRole) {
+      continue;
+    }
+    console.log("granting token minter role to land: ", tokens[i].name);
+    await tokensContracts[i].grantRole(
+      hre.ethers.utils.keccak256(hre.ethers.utils.toUtf8Bytes("MINTER_ROLE")),
+      landContract.address,
+    );
+  }
 
   if (dispenserOwner !== deployer) {
     const hasRole = await disperseFundsContract.hasRole(
