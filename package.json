@@ -33,6 +33,7 @@
     "trading:setup": "yarn workspace @se-2/trading-bots setup",
     "trading:trade": "yarn workspace @se-2/trading-bots trade",
     "trading:bots": "yarn workspace @se-2/trading-bots bots",
+    "trading:botInfo": "yarn workspace @se-2/trading-bots botInfo",
     "oracle:update": "cd packages/oracle && node updatePriceData.js",
     "oracle:bots": "cd packages/oracle && node runAllBots.js",
     "oracle": "cd packages/oracle && yarn begin"
