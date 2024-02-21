@@ -12,6 +12,35 @@ export async function checkAndGenerateAssetList() {
       chalk.yellow("assetList.json not found. Starting generation process...")
     );
 
+    // Step 0: Generate Background Image
+    await new Promise((resolve, reject) => {
+      const spinner = ora({
+        text: "Generating background image...",
+        spinner: "dots",
+        color: "yellow",
+      }).start();
+
+      exec("node generateBackgroundImage.js", (error, stdout, stderr) => {
+        spinner.stop();
+        if (error) {
+          console.error(
+            chalk.red(`Error generating background: ${error.message}`)
+          );
+          reject(error);
+          return;
+        }
+        if (stderr) {
+          console.error(
+            chalk.red(`Stderr during background generation: ${stderr}`)
+          );
+          reject(new Error(stderr));
+          return;
+        }
+        console.log(chalk.green("background generated successfully."));
+        resolve(stdout);
+      });
+    });
+
     // Step 1: Generate raw asset list
     await new Promise((resolve, reject) => {
       const spinner = ora({

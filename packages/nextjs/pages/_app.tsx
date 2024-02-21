@@ -45,7 +45,14 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout =
     Component.getLayout ??
     (page => (
-      <div className="flex flex-col items-center justify-center py-2">
+      <div
+        className="flex flex-col items-center justify-center py-2"
+        style={{
+          backgroundImage: `url('/assets/titleImage.png')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
         <div className="md:min-w-[32rem] p-6 my-14 md:my-10 w-full md:w-[35%]">
           <Header alias={alias} />
           <main className="md:static fixed bottom-0 left-0 w-full pb-4 bg-white md:bg-[#ffffff00] h-[50vh] md:h-full overflow-y-scroll rounded-t-3xl p-2 no-scrollbar">
