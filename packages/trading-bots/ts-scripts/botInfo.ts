@@ -1,16 +1,25 @@
-import { createPublicClient, http, formatEther, getContract } from "viem";
+import {
+  createPublicClient,
+  http,
+  formatEther,
+  createWalletClient,
+} from "viem";
 import scaffoldConfig from "../../nextjs/scaffold.config";
 import dotenv from "dotenv";
 dotenv.config();
 import { contracts } from "../../nextjs/utils/scaffold-eth/contract";
 import fs from "fs";
 import botConfig from "../config";
+import { privateKeyToAccount } from "viem/accounts";
 
 const targetNetwork = scaffoldConfig.targetNetwork;
 
 if (!contracts) {
   throw new Error("No contracts found");
 }
+
+const deployerPk = process.env.DEPLOYER_PRIVATE_KEY;
+const account = privateKeyToAccount(`0x${deployerPk}`);
 
 //const contractsCurrentNetwork = contracts[targetNetwork.id];
 
@@ -24,7 +33,12 @@ const wallets = walletsData.addresses; // Access the addresses array
 async function main() {
   const publicClient = createPublicClient({
     chain: targetNetwork,
-    transport: http(),
+    transport: http(process.env.RPC),
+  });
+  const walletClient = createWalletClient({
+    account,
+    chain: targetNetwork,
+    transport: http(process.env.RPC),
   });
 
   // Iterate over the wallets array directly
@@ -49,6 +63,20 @@ async function main() {
         "ETH @",
         wallet.address
       );
+      if (balance < botConfig.networkTokenRefillAt) {
+        console.log(
+          "Wallet balance is below ",
+          formatEther(botConfig.networkTokenRefillAt),
+          " sending ",
+          formatEther(botConfig.networkTokenRefill),
+          "..."
+        );
+        await walletClient.sendTransaction({
+          to: wallet.address,
+          value: botConfig.networkTokenRefill,
+        });
+      }
+      //}
       //check if they are funded enough..........................
     } catch (error) {
       // Type assertion added here
