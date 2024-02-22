@@ -24,7 +24,8 @@ export const TokenBalanceRow = ({
   return (
     <tr>
       <td align="left" className="px-3 text-xs">
-        {tokenInfo.emoji + " " + tokenInfo.name}
+        <div style={{ position: "absolute", color: "#444444" }}>{tokenInfo.name}</div>
+        <img style={{ maxWidth: 64 }} src={"assets/asset_" + tokenInfo.name + ".png"}></img>
       </td>
       <td>{loading ? "..." : etherFormatted(tokenBalance?.price)}</td>
       <td>{loading ? "..." : etherFormatted(tokenBalance?.balance)}</td>

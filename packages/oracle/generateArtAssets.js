@@ -51,26 +51,29 @@ console.log("promptTxt", promptTxt);
 
 console.log("artStyle", artStyle);
 
-const fullPrompt =
-  "create a full background image for a website " +
-  "the image should depiect a scene from a game about: " +
-  promptTxt +
-  "The art style should be " +
-  artStyle;
-
-console.log("fullPrompt", fullPrompt);
-
-// Define the data for the POST request
-const data = {
-  model: "dall-e-3",
-  prompt: fullPrompt,
-  n: 1,
-  quality: "hd",
-  size: "1024x1792",
-};
-
 // Define the function to make the API call
-const generateImage = async () => {
+const generateImage = async (assetName) => {
+  const fullPrompt =
+    "Create an image for a game, representing " +
+    assetName +
+    " with a flat black background " +
+    "The art style should be " +
+    artStyle +
+    " please just a very plain black image - like you are rendering the icon of the element of" +
+    assetName +
+    " and nothing else";
+
+  console.log("fullPrompt", fullPrompt);
+
+  // Define the data for the POST request
+  const data = {
+    model: "dall-e-3",
+    prompt: fullPrompt,
+    n: 1,
+    quality: "hd",
+    size: "1024x1024",
+  };
+
   try {
     const response = await fetch(
       "https://api.openai.com/v1/images/generations",
@@ -94,7 +97,8 @@ const generateImage = async () => {
     // Handle the result as needed, e.g., save to a file or database
 
     const imageUrl = result.data[0].url; // Assuming the URL is in this path
-    const outputPath = "../nextjs/public/assets/titleImage.png";
+    const outputPath =
+      "../nextjs/public/assets/asset_" + assetName.replaceAll(" ", "") + ".png";
 
     //openBrowser(imageUrl);
 
@@ -107,12 +111,24 @@ const generateImage = async () => {
       console.error("Error downloading image:", error);
     }
   } catch (error) {
-    console.error("Error during image2 generation:", error.message);
+    console.error("Error during image4 generation:", error.message);
   }
 };
 
-// Call the function to execute the API call
-console.log("🔮 generating image...");
-await new Promise((resolve) => setTimeout(resolve, 1000));
-await generateImage();
-await new Promise((resolve) => setTimeout(resolve, 5000));
+const allAssetsRaw = await fs.readFileSync("assetList.json", "utf8");
+const allAssets = JSON.parse(allAssetsRaw);
+
+console.log("🔮 generating asset image...");
+await new Promise((resolve) => setTimeout(resolve, 6000));
+
+for (let i = 0; i < allAssets.length; i++) {
+  console.log(
+    " 🧑‍🎨 generating asset image for ",
+    allAssets[i].emoji,
+    allAssets[i].name
+  );
+  generateImage(allAssets[i].name);
+
+  ///put in a 3s delay
+  await new Promise((resolve) => setTimeout(resolve, 8000));
+}

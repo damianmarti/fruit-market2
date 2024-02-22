@@ -1,3 +1,6 @@
+packages/nextjs/public/assets/asset_*
+packages/nextjs/public/assets/art*
+packages/oracle/downloaded_image_no_bg*
 packages/nextjs/public/assets/titleImage.png
 packages/oracle/artStyle.txt
 packages/oracle/downloaded_image_no_bg.png

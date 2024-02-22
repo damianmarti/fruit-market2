@@ -52,8 +52,8 @@ console.log("promptTxt", promptTxt);
 console.log("artStyle", artStyle);
 
 const fullPrompt =
-  "create a full background image for a website " +
-  "the image should depiect a scene from a game about: " +
+  "create a piece of art that looks like a painting or piece of art you would collect " +
+  "the image should depiect a scene from something related to " +
   promptTxt +
   "The art style should be " +
   artStyle;
@@ -70,7 +70,7 @@ const data = {
 };
 
 // Define the function to make the API call
-const generateImage = async () => {
+const generateImage = async (index) => {
   try {
     const response = await fetch(
       "https://api.openai.com/v1/images/generations",
@@ -94,7 +94,7 @@ const generateImage = async () => {
     // Handle the result as needed, e.g., save to a file or database
 
     const imageUrl = result.data[0].url; // Assuming the URL is in this path
-    const outputPath = "../nextjs/public/assets/titleImage.png";
+    const outputPath = "../nextjs/public/assets/art" + index + ".png";
 
     //openBrowser(imageUrl);
 
@@ -107,12 +107,18 @@ const generateImage = async () => {
       console.error("Error downloading image:", error);
     }
   } catch (error) {
-    console.error("Error during image2 generation:", error.message);
+    console.error("Error during art image generation:", error.message);
   }
 };
 
 // Call the function to execute the API call
-console.log("🔮 generating image...");
-await new Promise((resolve) => setTimeout(resolve, 1000));
-await generateImage();
+console.log("🔮 generating artworks.....");
+await new Promise((resolve) => setTimeout(resolve, 5000));
+await generateImage(1);
+await new Promise((resolve) => setTimeout(resolve, 5000));
+await generateImage(2);
+await new Promise((resolve) => setTimeout(resolve, 5000));
+await generateImage(3);
+await new Promise((resolve) => setTimeout(resolve, 5000));
+await generateImage(4);
 await new Promise((resolve) => setTimeout(resolve, 5000));
