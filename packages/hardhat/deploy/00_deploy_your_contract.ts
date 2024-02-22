@@ -1,6 +1,7 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import tokensConfig from "../../nextjs/tokens.config";
+import { formatEther } from "ethers/lib/utils";
 
 /**
  * Deploys a contract named "YourContract" using the deployer account and
@@ -57,6 +58,11 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     autoMine: true,
   });
 
+  const saltContract = await hre.ethers.getContract("SaltToken", deployer);
+
+  const deployerBalance = await saltContract.balanceOf(deployer);
+  console.log("deployer salt balance: ", formatEther(deployerBalance.toString()));
+
   const tokens = tokensConfig;
 
   for (let i = 0; i < tokens.length; i++) {
@@ -80,8 +86,6 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     // automatically mining the contract deployment transaction. There is no effect on live networks.
     autoMine: true,
   });
-
-  const saltContract = await hre.ethers.getContract("SaltToken", deployer);
 
   await deploy("CreditNwCalc", {
     from: deployer,
@@ -165,8 +169,12 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   //send credits to a burner for other things like the trading bots
   const burnerSaltBalance = await saltContract.balanceOf(YOUR_LOCAL_BURNER_ADDRESS);
   console.log("burner salt balance: ", burnerSaltBalance.toString());
+
+  //first show my balance:
+  console.log("DEPLOYER BALANCE:" + formatEther(await saltContract.balanceOf(deployer)));
+
   if (burnerSaltBalance.eq(0)) {
-    console.log("sending salt to burner");
+    console.log("sending salt to burner", YOUR_LOCAL_BURNER_ADDRESS);
     await saltContract.transfer(YOUR_LOCAL_BURNER_ADDRESS, hre.ethers.utils.parseEther("3500000"));
   }
 
