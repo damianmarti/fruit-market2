@@ -116,7 +116,7 @@ console.log("🔮 generating artworks.....");
 await new Promise((resolve) => setTimeout(resolve, 5000));
 await generateImage(1);
 //await new Promise((resolve) => setTimeout(resolve, 5000));
-await generateImage(2);
+//await generateImage(2);
 //await new Promise((resolve) => setTimeout(resolve, 5000));
 //await generateImage(3);
 //await new Promise((resolve) => setTimeout(resolve, 5000));
