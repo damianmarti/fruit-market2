@@ -119,7 +119,7 @@ const allAssetsRaw = await fs.readFileSync("assetList.json", "utf8");
 const allAssets = JSON.parse(allAssetsRaw);
 
 console.log("🔮 generating asset image...");
-await new Promise((resolve) => setTimeout(resolve, 6000));
+await new Promise((resolve) => setTimeout(resolve, 7000));
 
 for (let i = 0; i < allAssets.length; i++) {
   console.log(
@@ -130,5 +130,5 @@ for (let i = 0; i < allAssets.length; i++) {
   generateImage(allAssets[i].name);
 
   ///put in a 3s delay
-  await new Promise((resolve) => setTimeout(resolve, 8000));
+  await new Promise((resolve) => setTimeout(resolve, 9000));
 }
