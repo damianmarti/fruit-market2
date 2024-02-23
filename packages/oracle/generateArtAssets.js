@@ -56,10 +56,10 @@ const generateImage = async (assetName) => {
   const fullPrompt =
     "Create an image for a game, representing " +
     assetName +
-    " with a flat black background " +
+    " with a flat white background " +
     "The art style should be " +
     artStyle +
-    " please just a very plain black image - like you are rendering the icon of the element of" +
+    " please just a very plain white image - like you are rendering a bright icon of " +
     assetName +
     " and nothing else";
 
