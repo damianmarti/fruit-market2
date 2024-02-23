@@ -3,11 +3,18 @@ import { LandButton } from "./LandButton";
 import { parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useDeployedContractInfo, useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { TTokenInfo } from "~~/types/wallet";
 
 /**
  * Site footer
  */
-export const LandOwnership = () => {
+export const LandOwnership = ({
+  tokenContracts,
+  tokensByAddress,
+}: {
+  tokenContracts: { [key: string]: any };
+  tokensByAddress: { [key: string]: TTokenInfo };
+}) => {
   const { address } = useAccount();
 
   const { data: landContractInfo } = useDeployedContractInfo("Land");
@@ -46,7 +53,14 @@ export const LandOwnership = () => {
   const allLandButtons = [];
   for (let i = 0; i < 10; i++) {
     allLandButtons.push(
-      <LandButton id={i} contractMapData={contractMapData} canHarvestAll={canHarvestAll} rottenAll={rottenAll} />,
+      <LandButton
+        id={i}
+        contractMapData={contractMapData}
+        canHarvestAll={canHarvestAll}
+        rottenAll={rottenAll}
+        tokenContracts={tokenContracts}
+        tokensByAddress={tokensByAddress}
+      />,
     );
   }
 
