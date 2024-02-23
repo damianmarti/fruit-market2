@@ -30,7 +30,7 @@ export const TokenBalanceRow = ({
       <td>{loading ? "..." : etherFormatted(tokenBalance?.price)}</td>
       <td>{loading ? "..." : etherFormatted(tokenBalance?.balance)}</td>
       <td>{loading ? "..." : etherFormatted(tokenBalance?.value)}</td>
-      <td className="flex flex-row place-content-center">
+      <td>
         {paused ? (
           <div>PAUSED</div>
         ) : (
