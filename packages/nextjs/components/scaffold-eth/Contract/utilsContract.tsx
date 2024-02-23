@@ -24,6 +24,10 @@ const getParsedError = (e: any | BaseViemError): string => {
   if (e instanceof BaseViemError) {
     if (e.details) {
       message = e.details;
+    } else if (e.message && e.message.includes("InsufficientLiquidityError")) {
+      message = "Insufficient liquidity for this amount. Please try a smaller amount.";
+    } else if (e.message && e.message.includes("SlippageError")) {
+      message = "Slippage error. Try swapping again.";
     } else if (e.shortMessage) {
       message = e.shortMessage;
     } else if (e.message) {
