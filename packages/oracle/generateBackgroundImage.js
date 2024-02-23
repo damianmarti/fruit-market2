@@ -113,6 +113,6 @@ const generateImage = async () => {
 
 // Call the function to execute the API call
 console.log("🔮 generating image...");
-await new Promise((resolve) => setTimeout(resolve, 1000));
+await new Promise((resolve) => setTimeout(resolve, 5000));
 await generateImage();
 await new Promise((resolve) => setTimeout(resolve, 5000));
