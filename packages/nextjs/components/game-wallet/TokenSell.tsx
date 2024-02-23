@@ -54,12 +54,12 @@ export const TokenSell = ({
 
   console.log("tokenAllowance", token, tokenAllowance?.toString());
 
-  const slippage = 105n / 100n;
+  const slippage = 95n / 100n;
 
   const { writeAsync: assetToCredit, isMining: isMiningAssetToCredit } = useScaffoldContractWrite({
     contractName: dexContractName,
     functionName: "assetToCredit",
-    args: [parseEther(amountIn || "0") * slippage, parseEther(amountOut || "0")],
+    args: [parseEther(amountIn || "0"), parseEther(amountOut || "0") * slippage],
     gas: 1000000n,
   });
 
