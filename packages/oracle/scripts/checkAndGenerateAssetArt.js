@@ -13,6 +13,7 @@ export async function checkAndGenerateAssetArt() {
       color: "yellow",
     }).start();
 
+    /*
     exec("node generateBackgroundImage.js", (error, stdout, stderr) => {
       spinner.stop();
       if (error) {
@@ -28,7 +29,7 @@ export async function checkAndGenerateAssetArt() {
       console.log(chalk.green("art generated successfully."));
       resolve(stdout);
     });
-
+*/
     exec("node generateArtAssets.js", (error, stdout, stderr) => {
       spinner.stop();
       if (error) {

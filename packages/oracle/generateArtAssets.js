@@ -54,14 +54,16 @@ console.log("artStyle", artStyle);
 // Define the function to make the API call
 const generateImage = async (assetName) => {
   const fullPrompt =
-    "Create an image for a game, representing " +
+    "Create an image for a game (about " +
+    promptTxt +
+    ") representing " +
     assetName +
-    " with a flat white background " +
+    " with a flat white background. " +
     "The art style should be " +
     artStyle +
-    " please just a very plain white image - like you are rendering a bright icon of " +
+    " please just a very plain white image - like you are rendering a bright, stand-alone image of " +
     assetName +
-    " and nothing else";
+    " and nothing else. ";
 
   console.log("fullPrompt", fullPrompt);
 
@@ -70,7 +72,7 @@ const generateImage = async (assetName) => {
     model: "dall-e-3",
     prompt: fullPrompt,
     n: 1,
-    quality: "hd",
+    /*quality: "hd",*/
     size: "1024x1024",
   };
 
@@ -119,7 +121,7 @@ const allAssetsRaw = await fs.readFileSync("assetList.json", "utf8");
 const allAssets = JSON.parse(allAssetsRaw);
 
 console.log("🔮 generating asset image...");
-await new Promise((resolve) => setTimeout(resolve, 7000));
+await new Promise((resolve) => setTimeout(resolve, 500));
 
 for (let i = 0; i < allAssets.length; i++) {
   console.log(
@@ -127,8 +129,8 @@ for (let i = 0; i < allAssets.length; i++) {
     allAssets[i].emoji,
     allAssets[i].name
   );
-  generateImage(allAssets[i].name);
+  await generateImage(allAssets[i].name);
 
   ///put in a 3s delay
-  await new Promise((resolve) => setTimeout(resolve, 9000));
+  await new Promise((resolve) => setTimeout(resolve, 500));
 }

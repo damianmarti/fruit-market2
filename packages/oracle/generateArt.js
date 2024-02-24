@@ -113,12 +113,12 @@ const generateImage = async (index) => {
 
 // Call the function to execute the API call
 console.log("🔮 generating artworks.....");
-await new Promise((resolve) => setTimeout(resolve, 5000));
+await new Promise((resolve) => setTimeout(resolve, 500));
 await generateImage(1);
-//await new Promise((resolve) => setTimeout(resolve, 5000));
-//await generateImage(2);
+await new Promise((resolve) => setTimeout(resolve, 500));
+await generateImage(2);
 //await new Promise((resolve) => setTimeout(resolve, 5000));
 //await generateImage(3);
 //await new Promise((resolve) => setTimeout(resolve, 5000));
 //await generateImage(4);
-await new Promise((resolve) => setTimeout(resolve, 5000));
+await new Promise((resolve) => setTimeout(resolve, 500));

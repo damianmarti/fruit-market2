@@ -15,7 +15,7 @@ async function main() {
   await checkAndCreateArtStyleFile();
   await checkAndGenerateAssetList();
   await checkAndGenerateAssetArt();
-  await checkAndGenerateArt();
+  //await checkAndGenerateArt();
 
   console.log(
     "  🛰 you are ready to deploy your contracts with `yarn deploy --reset`"
