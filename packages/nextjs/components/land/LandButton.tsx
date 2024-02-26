@@ -3,6 +3,7 @@ import { useAccount } from "wagmi";
 import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 import scaffoldConfig from "~~/scaffold.config";
 import { TTokenInfo } from "~~/types/wallet";
+import CashIcon from "~~/icons/CashIcon";
 
 interface LandButtonProps {
   id: number;
@@ -88,7 +89,7 @@ export const LandButton = ({
             </select>
             {selectedToken && (
               <button
-                className="btn btn-secondary"
+                className="btn btn-secondary mt-2"
                 disabled={loadingApproval}
                 onClick={() => {
                   setLoadingApproval(true);
@@ -167,7 +168,7 @@ export const LandButton = ({
           <div className="text-lg font-bold mb-2">Land #{id}</div>
           <div>
             <button
-              className="btn btn-secondary"
+              className="btn btn-secondary gap-0"
               disabled={loadingApproval}
               onClick={() => {
                 setLoadingApproval(true);
@@ -177,7 +178,7 @@ export const LandButton = ({
                 }, 5000);
               }}
             >
-              📑 Claim Land for 💸 10 Credits
+              📑 Claim (<CashIcon width="40" height="35" className="m-0" /> 10)
             </button>
           </div>
         </div>,
@@ -198,7 +199,7 @@ export const LandButton = ({
 
   return (
     <>
-      <div className="flex gap-1 justify-center w-full mb-2 mt-4">{landButtons}</div>
+      <div className="flex justify-center mb-2 mt-4 w-[48%]">{landButtons}</div>
     </>
   );
 };

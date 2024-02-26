@@ -26,7 +26,7 @@ contract Land {
 	uint256 public constant GROW_PERIOD = 1 minutes;
 	uint256 public constant ROTTEN_PERIOD = 1 minutes;
 	bool public constant ALLOW_TO_CHANGE_FARM = false;
-	uint256 public constant MAX_TILES = 10;
+	uint256 public constant MAX_TILES = 100;
 	uint256 public constant LAND_PRICE = 10 ether;
 	uint256 public constant CHANGE_FARM_PRICE = 5 ether;
 
@@ -44,7 +44,7 @@ contract Land {
 		address tokenAddress;
 	}
 
-	Tile[10] public tiles;
+	Tile[MAX_TILES] public tiles;
 
 	address public strawberryAddress;
 	address public creditToken;
@@ -61,7 +61,7 @@ contract Land {
 			currentTaxRate: 0,
 			tokenAddress: address(0)
 		});
-		for (uint256 i = 0; i < 10; i++) {
+		for (uint256 i = 0; i < MAX_TILES; i++) {
 			tiles[i] = startingTile;
 		}
 
@@ -70,7 +70,7 @@ contract Land {
 		}
 	}
 
-	function getMap() public view returns (Tile[10] memory) {
+	function getMap() public view returns (Tile[MAX_TILES] memory) {
 		return tiles;
 	}
 
@@ -92,16 +92,16 @@ contract Land {
 	}
 
 	function canHarvestAll() public view returns (bool[] memory) {
-		bool[] memory canHarvestAllResult = new bool[](10);
-		for (uint256 i = 0; i < 10; i++) {
+		bool[] memory canHarvestAllResult = new bool[](MAX_TILES);
+		for (uint256 i = 0; i < MAX_TILES; i++) {
 			canHarvestAllResult[i] = canHarvest(i);
 		}
 		return canHarvestAllResult;
 	}
 
 	function rottenAll() public view returns (bool[] memory) {
-		bool[] memory rottenAllResult = new bool[](10);
-		for (uint256 i = 0; i < 10; i++) {
+		bool[] memory rottenAllResult = new bool[](MAX_TILES);
+		for (uint256 i = 0; i < MAX_TILES; i++) {
 			rottenAllResult[i] = rotten(i);
 		}
 		return rottenAllResult;
