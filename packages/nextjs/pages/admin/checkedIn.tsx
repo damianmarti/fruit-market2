@@ -130,6 +130,7 @@ const CheckedInPage: NextPageWithLayout = () => {
           disabled={processing}
           message={message}
           handleSignature={handleSignature}
+          confirmation={true}
         >
           Flush DB
         </BurnerSigner>
