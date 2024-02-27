@@ -44,7 +44,9 @@ const Land: NextPageWithLayout = () => {
 
       // load tiles from the contract
       for (let i = 9; i >= 0; i--) {
-        data[i + 3][7] = contractMapData ? Number(contractMapData[i].sprite) + 6 : 0;
+        data[i + 3][7] = contractMapData
+          ? Number((contractMapData[i as keyof typeof contractMapData] as any).sprite) + 6
+          : 0;
       }
 
       // hard code a tile
