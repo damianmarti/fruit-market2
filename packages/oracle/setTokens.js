@@ -9,10 +9,20 @@ console.log("👉 assetList", assetList);
 const priceList = JSON.parse(await fs.readFileSync("priceList.json", "utf8"));
 console.log("💸 priceList", priceList);
 
-const currentTokenList = await fs.readFileSync(
-  "../nextjs/tokens.config.ts",
-  "utf8"
-);
+let currentTokenList;
+
+try {
+  currentTokenList = await fs.readFileSync(
+    "../nextjs/tokens.config.ts",
+    "utf8"
+  );
+} catch (e) {
+  console.log(
+    "🚨 error reading tokens.config.ts but that's okay we will create it...",
+    e
+  );
+  currentTokenList = "[]";
+}
 
 console.log("currentTokenList", currentTokenList);
 
