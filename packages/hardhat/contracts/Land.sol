@@ -25,11 +25,15 @@ interface IERC20 {
 contract Land {
 	uint256 public constant GROW_PERIOD = 1 minutes;
 	uint256 public constant ROTTEN_PERIOD = 1 minutes;
+	bool public constant ALLOW_TO_CHANGE_FARM = false;
+	uint256 public constant MAX_TILES = 100;
+	uint256 public constant LAND_PRICE = 10 ether;
+	uint256 public constant CHANGE_FARM_PRICE = 5 ether;
 
 	enum Sprites {
 		Grass,
 		House,
-		Strawberry
+		Busy
 	}
 
 	struct Tile {
@@ -37,11 +41,36 @@ contract Land {
 		address owner;
 		uint256 lastHarvest;
 		uint256 currentTaxRate;
+		address tokenAddress;
 	}
 
-	Tile[10] public tiles;
+	Tile[MAX_TILES] public tiles;
 
-	function getMap() public view returns (Tile[10] memory) {
+	address public strawberryAddress;
+	address public creditToken;
+
+	mapping(address => bool) tokenAddresses;
+
+	constructor(address _creditToken, address[] memory tokenAddrs) {
+		creditToken = _creditToken;
+
+		Tile memory startingTile = Tile({
+			sprite: Sprites.Grass,
+			owner: address(0),
+			lastHarvest: 0,
+			currentTaxRate: 0,
+			tokenAddress: address(0)
+		});
+		for (uint256 i = 0; i < MAX_TILES; i++) {
+			tiles[i] = startingTile;
+		}
+
+		for (uint256 i = 0; i < tokenAddrs.length; i++) {
+			tokenAddresses[tokenAddrs[i]] = true;
+		}
+	}
+
+	function getMap() public view returns (Tile[MAX_TILES] memory) {
 		return tiles;
 	}
 
@@ -53,24 +82,26 @@ contract Land {
 		credit.transferFrom(msg.sender, address(this), 10 ether);
 	}
 
-	function farm(uint256 _tile) public {
+	function farm(uint256 _tile, address tokenAddress) public {
 		require(tiles[_tile].owner == msg.sender, "You don't own this tile");
 		require(tiles[_tile].sprite == Sprites.House, "You can't farm here");
-		tiles[_tile].sprite = Sprites.Strawberry;
+		require(tokenAddresses[tokenAddress], "Invalid token address");
+		tiles[_tile].sprite = Sprites.Busy;
 		tiles[_tile].lastHarvest = block.timestamp;
+		tiles[_tile].tokenAddress = tokenAddress;
 	}
 
 	function canHarvestAll() public view returns (bool[] memory) {
-		bool[] memory canHarvestAllResult = new bool[](10);
-		for (uint256 i = 0; i < 10; i++) {
+		bool[] memory canHarvestAllResult = new bool[](MAX_TILES);
+		for (uint256 i = 0; i < MAX_TILES; i++) {
 			canHarvestAllResult[i] = canHarvest(i);
 		}
 		return canHarvestAllResult;
 	}
 
 	function rottenAll() public view returns (bool[] memory) {
-		bool[] memory rottenAllResult = new bool[](10);
-		for (uint256 i = 0; i < 10; i++) {
+		bool[] memory rottenAllResult = new bool[](MAX_TILES);
+		for (uint256 i = 0; i < MAX_TILES; i++) {
 			rottenAllResult[i] = rotten(i);
 		}
 		return rottenAllResult;
@@ -89,38 +120,30 @@ contract Land {
 	function harvest(uint256 _tile) public {
 		require(tiles[_tile].owner == msg.sender, "You don't own this tile");
 		require(
-			tiles[_tile].sprite == Sprites.Strawberry,
+			tiles[_tile].sprite == Sprites.Busy,
 			"Nothing planted here yet"
 		);
 		require(canHarvest(_tile), "Not ready to harvest yet");
 		require(!rotten(_tile), "Rotten strawberry!");
 		tiles[_tile].lastHarvest = block.timestamp;
-		IERC20 strawberry = IERC20(strawberryAddress);
-		strawberry.mint(msg.sender, 5 ether);
+		IERC20 token = IERC20(tiles[_tile].tokenAddress);
+		token.mint(msg.sender, 5 ether);
 	}
 
 	function farmAgain(uint256 _tile) public {
 		require(tiles[_tile].owner == msg.sender, "You don't own this tile");
-		require(tiles[_tile].sprite == Sprites.Strawberry, "Nothing planted");
+		require(tiles[_tile].sprite == Sprites.Busy, "Nothing planted");
 		require(rotten(_tile), "Not rotten yet");
 		tiles[_tile].lastHarvest = block.timestamp;
 	}
 
-	address public strawberryAddress;
-	address public creditToken;
-
-	constructor(address _creditToken, address _strawberryAddress) {
-		creditToken = _creditToken;
-		strawberryAddress = _strawberryAddress;
-
-		Tile memory startingTile = Tile({
-			sprite: Sprites.Grass,
-			owner: address(0),
-			lastHarvest: 0,
-			currentTaxRate: 0
-		});
-		for (uint256 i = 0; i < 10; i++) {
-			tiles[i] = startingTile;
-		}
+	function changeFarm(uint256 _tile, address tokenAddress) public {
+		require(tiles[_tile].owner == msg.sender, "You don't own this tile");
+		require(ALLOW_TO_CHANGE_FARM, "Not allowed to change farm");
+		require(tokenAddresses[tokenAddress], "Invalid token address");
+		IERC20 credit = IERC20(creditToken);
+		credit.transferFrom(msg.sender, address(this), CHANGE_FARM_PRICE);
+		tiles[_tile].tokenAddress = tokenAddress;
+		tiles[_tile].lastHarvest = block.timestamp;
 	}
 }

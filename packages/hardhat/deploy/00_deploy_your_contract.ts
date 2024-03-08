@@ -277,11 +277,9 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     await delay(5000);
   }
 
-  const STRAWBS = 2;
-
   const landContract = await deploy("Land", {
     from: deployer,
-    args: [salt.address, tokensContracts[STRAWBS].address],
+    args: [salt.address, tokensContracts.map(t => t.address)],
     log: true,
     autoMine: true,
     contract: "Land",

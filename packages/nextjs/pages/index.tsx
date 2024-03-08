@@ -78,6 +78,7 @@ const Home: NextPageWithLayout<{ setAlias: Dispatch<SetStateAction<string>> }> =
   const dexContracts: { [key: string]: any } = {};
   const tokenContractsAddresses: string[] = [];
   const dexContractsAddresses: string[] = [];
+  const tokensByAddress: { [key: string]: TTokenInfo } = {};
 
   tokens.forEach(token => {
     const contractName: ContractName = `${token.name}Token` as ContractName;
@@ -89,6 +90,7 @@ const Home: NextPageWithLayout<{ setAlias: Dispatch<SetStateAction<string>> }> =
     if (data) {
       tokenContracts[token.name] = data;
       tokenContractsAddresses.push(data.address);
+      tokensByAddress[data.address] = token;
     }
 
     // The tokens array should not change, so this should be safe. Anyway, we can refactor this later.
@@ -402,7 +404,7 @@ const Home: NextPageWithLayout<{ setAlias: Dispatch<SetStateAction<string>> }> =
         )}
       </div>
 
-      <LandOwnership />
+      <LandOwnership tokenContracts={tokenContracts} tokensByAddress={tokensByAddress} />
     </>
   );
 };
