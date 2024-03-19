@@ -2,8 +2,6 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import type { NextPageWithLayout } from "./_app";
 import { useInterval } from "usehooks-ts";
 import { formatUnits, parseEther } from "viem";
-import { createWalletClient, http } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
 import { useAccount } from "wagmi";
 import { BackwardIcon } from "@heroicons/react/24/outline";
 import PriceChart from "~~/components/game-wallet/PriceChart";
@@ -11,8 +9,8 @@ import { TokenBalanceRow } from "~~/components/game-wallet/TokenBalanceRow";
 import { TokenBuy } from "~~/components/game-wallet/TokenBuy";
 import { TokenSell } from "~~/components/game-wallet/TokenSell";
 import { LandOwnership } from "~~/components/land/LandOwnership";
+import { BurnerSigner } from "~~/components/scaffold-eth/BurnerSigner";
 import { useScaffoldContract, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
-import { loadBurnerSK } from "~~/hooks/scaffold-eth";
 import CashIcon from "~~/icons/CashIcon";
 import scaffoldConfig from "~~/scaffold.config";
 import { TTokenBalance, TTokenInfo } from "~~/types/wallet.d";
@@ -26,6 +24,7 @@ const Home: NextPageWithLayout<{ setAlias: Dispatch<SetStateAction<string>> }> =
   const tokens = scaffoldConfig.tokens;
 
   const { address } = useAccount();
+  const [processing, setProcessing] = useState(false);
   const [loadingCheckedIn, setLoadingCheckedIn] = useState(true);
   const [checkedIn, setCheckedIn] = useState(false);
   const [swapToken, setSwapToken] = useState<TTokenInfo>(scaffoldConfig.tokens[0]);
@@ -36,11 +35,18 @@ const Home: NextPageWithLayout<{ setAlias: Dispatch<SetStateAction<string>> }> =
   const [loadingTokensData, setLoadingTokensData] = useState<boolean>(true);
   const [totalNetWorth, setTotalNetWorth] = useState<bigint>(0n);
   const [dexesPaused, setDexesPaused] = useState<DexesPaused>({});
+  const [aliasCount, setAliasCount] = useState<number>(0);
+  const [tempAlias, setTempAlias] = useState<string>("");
 
   const selectedTokenEmoji = scaffoldConfig.tokens.find(t => selectedTokenName === t.name)?.emoji;
 
   const message = {
     action: "user-checkin",
+    address: address,
+  };
+
+  const messageSaveAlias = {
+    action: "save-alias",
     address: address,
   };
 
@@ -218,8 +224,13 @@ const Home: NextPageWithLayout<{ setAlias: Dispatch<SetStateAction<string>> }> =
           },
         });
 
-        if (response.ok) {
+        const result = await response.json();
+
+        if (response.ok && result.checkedIn) {
           setCheckedIn(true);
+        } else if (response.ok && !result.checkedIn) {
+          setAliasCount(result.count);
+          setTempAlias(result.alias);
         }
       } catch (e) {
         console.log("Error checking if user is checked in", e);
@@ -233,57 +244,70 @@ const Home: NextPageWithLayout<{ setAlias: Dispatch<SetStateAction<string>> }> =
     }
   }, [address]);
 
-  useEffect(() => {
-    const handleCheckIn = async () => {
-      if (!address) {
-        return;
-      }
-
-      const burnerPK = loadBurnerSK();
-
-      const account = privateKeyToAccount(burnerPK);
-
-      const signer = createWalletClient({
-        account,
-        chain: scaffoldConfig.targetNetwork,
-        transport: http(),
-      });
-
-      // Sign the message
-      const messageString = JSON.stringify(message);
-      const signature = await signer.signMessage({
-        account,
-        message: messageString,
-      });
-
-      try {
-        // Post the signed message to the API
-        const response = await fetch("/api/check-in", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ signature, signerAddress: address }),
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-          setCheckedIn(true);
-          notification.success(result.message);
-          setAlias(result.alias);
-        } else {
-          notification.error(result.error);
-        }
-      } catch (e) {
-        console.log("Error checking in the user", e);
-      }
-    };
-
-    if (address && !loadingCheckedIn && !checkedIn) {
-      handleCheckIn();
+  const handleSignature = async ({ signature }: { signature: string }) => {
+    setProcessing(true);
+    if (!address) {
+      setProcessing(false);
+      return;
     }
-  }, [address, loadingCheckedIn, checkedIn]);
+
+    try {
+      // Post the signed message to the API
+      const response = await fetch("/api/check-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ signature, signerAddress: address }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setCheckedIn(true);
+        notification.success(result.message);
+        setAlias(result.alias);
+      } else {
+        notification.error(result.error);
+      }
+    } catch (e) {
+      console.log("Error checking in the user", e);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleSaveAliasSignature = async ({ signature }: { signature: string }) => {
+    setProcessing(true);
+    if (!address) {
+      setProcessing(false);
+      return;
+    }
+
+    try {
+      // Post the signed message to the API
+      const response = await fetch("/api/alias", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ signature, signerAddress: address }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setTempAlias(result.alias);
+        setAliasCount(result.count);
+      } else {
+        notification.error(result.error);
+      }
+    } catch (e) {
+      console.log("Error saving alias", e);
+    } finally {
+      setProcessing(false);
+    }
+  };
 
   const handleShowBuy = (selectedToken: TTokenInfo) => {
     console.log("selectedToken emoji: ", selectedToken.emoji);
@@ -307,7 +331,48 @@ const Home: NextPageWithLayout<{ setAlias: Dispatch<SetStateAction<string>> }> =
           </p>
         )}
 
-        {!checkedIn && !loadingCheckedIn && <div>Checking-in...</div>}
+        {!checkedIn && !loadingCheckedIn && (
+          <div className="flex flex-col items-stretch place-content-start content-start w-[100%] bg-white mt-4 rounded-3xl p-4">
+            {tempAlias ? (
+              <div>
+                <p className="text-md mb-0 mt-0">Your Alias:</p>
+                <p className="text-lg font-bold mt-0">{tempAlias}</p>
+                <div className="flex flex-row">
+                  <BurnerSigner
+                    className={`btn btn-secondary w-full mt-4 ${processing || loadingCheckedIn ? "loading" : ""}`}
+                    disabled={
+                      processing || loadingCheckedIn || checkedIn || aliasCount >= scaffoldConfig.userAliasesMaxTimes
+                    }
+                    message={messageSaveAlias}
+                    handleSignature={handleSaveAliasSignature}
+                  >
+                    Generate New Alias ({scaffoldConfig.userAliasesMaxTimes - aliasCount} left)
+                  </BurnerSigner>
+                  <BurnerSigner
+                    className={`btn btn-primary w-full mt-4 ml-2 ${processing || loadingCheckedIn ? "loading" : ""}`}
+                    disabled={processing || loadingCheckedIn || checkedIn}
+                    message={message}
+                    handleSignature={handleSignature}
+                  >
+                    Save n&apos; Start
+                  </BurnerSigner>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <p className="text-lg font-bold mb-0 mt-0">Welcome</p>
+                <BurnerSigner
+                  className={`btn btn-primary w-full mt-4 ${processing || loadingCheckedIn ? "loading" : ""}`}
+                  disabled={processing || loadingCheckedIn || checkedIn}
+                  message={messageSaveAlias}
+                  handleSignature={handleSaveAliasSignature}
+                >
+                  Start
+                </BurnerSigner>
+              </div>
+            )}
+          </div>
+        )}
 
         {checkedIn && !showBuy && !showSell && (
           <>
