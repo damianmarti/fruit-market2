@@ -14,6 +14,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return;
   }
 
+  const key = `user:${address}`;
+
+  const checkIn = await kv.hget<string>(key, "checkin");
+
+  if (!checkIn) {
+    res.status(404).json({ error: "Not checked in!" });
+    return;
+  }
+
   const alias = await kv.hget<any>("users:alias", address);
 
   if (!alias) {

@@ -1,6 +1,6 @@
 import tokensConfig from "./tokens.config";
 import { TTokenInfo } from "./types/wallet";
-import userAliases from "./userAliases";
+import { firstNames, lastNames } from "./userAliases";
 import { type Chain } from "viem";
 import * as chains from "viem/chains";
 
@@ -34,7 +34,8 @@ export type ScaffoldConfig = {
   tokens: TTokenInfo[];
   tokenLeaderboardPollingInterval: number;
   showChart: boolean;
-  userAliases: string[];
+  userAliases: { firstNames: string[]; lastNames: string[] };
+  userAliasesMaxTimes: number;
   burnerWallet: {
     signConfirmation: boolean;
   };
@@ -74,7 +75,8 @@ const scaffoldConfig = {
   tokens: tokensConfig,
   tokenLeaderboardPollingInterval: 60000,
   showChart: false,
-  userAliases: userAliases,
+  userAliases: { firstNames, lastNames },
+  userAliasesMaxTimes: 5,
 
   // Burner Wallet configuration
   burnerWallet: {

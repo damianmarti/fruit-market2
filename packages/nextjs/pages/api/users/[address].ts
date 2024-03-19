@@ -12,9 +12,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const userData = await kv.hgetall<any>(`user:${address}`);
 
   if (!userData || !userData.checkin) {
-    res.status(404).json({ error: "Not checked in!" });
+    const keyAliasCount = `aliasCount:${address}`;
+    const count: number | null = await kv.get(keyAliasCount);
+
+    if (!count) {
+      res.status(404).json({ error: "Not checked in!" });
+      return;
+    }
+
+    const alias = await kv.hget<any>("users:alias", `${address}`);
+
+    res.status(200).json({ checkedIn: false, count, alias });
     return;
   }
 
-  res.status(200).json(userData);
+  res.status(200).json({ checkedIn: true, userData });
 }
