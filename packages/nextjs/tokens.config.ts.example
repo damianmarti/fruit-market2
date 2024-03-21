@@ -1,64 +1,57 @@
 import { TTokenInfo } from "./types/wallet";
 
-  export type TokensConfig = TTokenInfo[];
-  
-  const tokensConfig = [
+export type TokensConfig = TTokenInfo[];
+
+const tokensConfig = [
   {
-    "contractName": "OilToken",
-    "name": "Oil",
-    "emoji": "🛢️",
-    "initAssetAmount": "100.1",
+    "contractName": "SandwichToken",
+    "name": "Sandwich",
+    "emoji": "🥪",
+    "initAssetAmount": "100",
     "initCreditAmount": "1000"
   },
   {
-    "contractName": "GasToken",
-    "name": "Gas",
-    "emoji": "⛽",
-    "initAssetAmount": "143",
+    "contractName": "HamburgerToken",
+    "name": "Hamburger",
+    "emoji": "🍔",
+    "initAssetAmount": "50",
     "initCreditAmount": "1000"
   },
   {
-    "contractName": "HoochToken",
-    "name": "Hooch",
-    "emoji": "🥃",
-    "initAssetAmount": "333.6666666666667",
+    "contractName": "BreadToken",
+    "name": "Bread",
+    "emoji": "🫓",
+    "initAssetAmount": "500",
     "initCreditAmount": "1000"
   },
   {
-    "contractName": "CopperToken",
-    "name": "Copper",
-    "emoji": "🪙",
-    "initAssetAmount": "200.2",
+    "contractName": "LettuceToken",
+    "name": "Lettuce",
+    "emoji": "🥬",
+    "initAssetAmount": "2000",
     "initCreditAmount": "1000"
   },
   {
-    "contractName": "WaterToken",
-    "name": "Water",
-    "emoji": "💧",
-    "initAssetAmount": "1001",
+    "contractName": "TomatoToken",
+    "name": "Tomato",
+    "emoji": "🍅",
+    "initAssetAmount": "1000",
     "initCreditAmount": "1000"
   },
   {
-    "contractName": "CornToken",
-    "name": "Corn",
-    "emoji": "🌽",
-    "initAssetAmount": "500.5",
+    "contractName": "CheeseToken",
+    "name": "Cheese",
+    "emoji": "🧀",
+    "initAssetAmount": "300",
     "initCreditAmount": "1000"
   },
   {
-    "contractName": "GunToken",
-    "name": "Gun",
-    "emoji": "🔫",
-    "initAssetAmount": "66.73333333333333",
+    "contractName": "MeatToken",
+    "name": "Meat",
+    "emoji": "🥩",
+    "initAssetAmount": "100",
     "initCreditAmount": "1000"
   },
-  {
-    "contractName": "DressToken",
-    "name": "Dress",
-    "emoji": "👗",
-    "initAssetAmount": "125.125",
-    "initCreditAmount": "1000"
-  }
 ] satisfies TokensConfig;
-  
-  export default tokensConfig;
+
+export default tokensConfig;
