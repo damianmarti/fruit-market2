@@ -330,6 +330,82 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     autoMine: true,
     contract: "FruitTokensData",
   });
+
+  await deploy("Chef", {
+    from: deployer,
+    args: [salt.address, tokensContracts.map(t => t.address)],
+    log: true,
+    autoMine: true,
+    contract: "Chef",
+  });
+
+  const chefContract = await hre.ethers.getContract("Chef", deployer);
+
+  // chef contract needs to be able to mint cooked tokens and burn ingredients
+  for (let i = 0; i < tokens.length; i++) {
+    const hasRole = await tokensContracts[i].hasRole(
+      hre.ethers.utils.keccak256(hre.ethers.utils.toUtf8Bytes("MINTER_ROLE")),
+      chefContract.address,
+    );
+    console.log("chef has token minter role: ", tokens[i].name, hasRole);
+    if (hasRole) {
+      continue;
+    }
+    console.log("granting token minter role to chef: ", tokens[i].name);
+    await tokensContracts[i].grantRole(
+      hre.ethers.utils.keccak256(hre.ethers.utils.toUtf8Bytes("MINTER_ROLE")),
+      chefContract.address,
+    );
+    const hasRoleBurner = await tokensContracts[i].hasRole(
+      hre.ethers.utils.keccak256(hre.ethers.utils.toUtf8Bytes("BURNER_ROLE")),
+      chefContract.address,
+    );
+    console.log("chef has token burner role: ", tokens[i].name, hasRoleBurner);
+    if (hasRoleBurner) {
+      continue;
+    }
+    console.log("granting token burner role to chef: ", tokens[i].name);
+    await tokensContracts[i].grantRole(
+      hre.ethers.utils.keccak256(hre.ethers.utils.toUtf8Bytes("BURNER_ROLE")),
+      chefContract.address,
+    );
+  }
+
+  // Unncoment this to add recipes to the chef contract
+  /*
+  const sandwichAddress = tokensContracts[0].address;
+  const hamburgerAddress = tokensContracts[1].address;
+  const breadAddress = tokensContracts[2].address;
+  const lettuceAddress = tokensContracts[3].address;
+  const tomatoAddress = tokensContracts[4].address;
+  const cheeseAddress = tokensContracts[5].address;
+  const meatAddress = tokensContracts[6].address;
+
+  await chefContract.addRecipe(
+    sandwichAddress,
+    {
+      ingredients: [
+        { tokenAddress: breadAddress, quantity: 2 },
+        { tokenAddress: lettuceAddress, quantity: 1 },
+        { tokenAddress: tomatoAddress, quantity: 1 },
+        { tokenAddress: cheeseAddress, quantity: 1 },
+      ]
+    }
+  );
+
+  await chefContract.addRecipe(
+    hamburgerAddress,
+    {
+      ingredients: [
+        { tokenAddress: breadAddress, quantity: 2 },
+        { tokenAddress: lettuceAddress, quantity: 1 },
+        { tokenAddress: tomatoAddress, quantity: 1 },
+        { tokenAddress: cheeseAddress, quantity: 1 },
+        { tokenAddress: meatAddress, quantity: 1 },
+      ]
+    }
+  );
+  */
 };
 
 export default deployYourContract;

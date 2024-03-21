@@ -9,6 +9,7 @@ import { TokenBalanceRow } from "~~/components/game-wallet/TokenBalanceRow";
 import { TokenBuy } from "~~/components/game-wallet/TokenBuy";
 import { TokenSell } from "~~/components/game-wallet/TokenSell";
 import { LandOwnership } from "~~/components/land/LandOwnership";
+import { Recipes } from "~~/components/recipes/Recipes";
 import { BurnerSigner } from "~~/components/scaffold-eth/BurnerSigner";
 import { useScaffoldContract, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import CashIcon from "~~/icons/CashIcon";
@@ -469,6 +470,7 @@ const Home: NextPageWithLayout<{ setAlias: Dispatch<SetStateAction<string>> }> =
         )}
       </div>
 
+      <Recipes tokensByAddress={tokensByAddress} />
       <LandOwnership tokenContracts={tokenContracts} tokensByAddress={tokensByAddress} />
     </>
   );
